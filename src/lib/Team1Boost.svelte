@@ -4,8 +4,10 @@
     // $: console.log(percent);
 </script>
 
-<div class="boost bg">
-    <div class="boost" style="width: {percent}%" />
+<div class="boost team1bg">
+    <div class="boost bg">
+        <div class="boost" style="width: {percent}%" />
+    </div>
 </div>
 
 <style>
@@ -17,6 +19,6 @@
 
     .bg {
         width: 300px;
-        background-color: #000;
+        background-color: #ff7300;
     }
 </style>
