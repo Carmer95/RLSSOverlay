@@ -30,9 +30,17 @@
 
 <style>
     .stats {
-        width: 300px;
-        height: 420px;
-        background-color: #000;
+        width: 420px;
+        height: 300px;
+        border-radius: 20%;
+        /* border-bottom-left-radius: 20%;
+        border-bottom-right-radius: 20%; */
+        /* background-color: #000; */
+        background-image: url('../assets/stats-image.jpg');
+        background-position: 40% 50%;
+        bottom: 80px;
+        position: absolute;
+        box-shadow: 5px 5px 8px 0px rgba(0,0,0,0.9);
     }
 
     .name {
@@ -42,26 +50,41 @@
         justify-content: center;
         align-items: center;
         width: 150px;
-        height: 80px;
-        background-color: gray;
-        border-radius: 5px;
+        height: 60px;
+        background-color: rgba(128, 128, 128, 0.404);
+        /* border-radius: 5px; */
+        border-bottom-left-radius: 20%;
+        border-bottom-right-radius: 20%;
+        font-size: 20px;
+        font-weight: bold;
+        /* color: #000; */
+        text-shadow: 0 0 5px #000, 0 0 10px #000, 0 0 15px #000, 0 0 20px #fff, 0 0 5px #fff, 0 0 10px #fff, 0 0 10px #fff, 0 0 10px #fff;
     }
 
     .category {
         position: absolute;
-        top: 100px;
+        top: 80px;
+        font-size: 20px;
+        font-weight: bold;
+        /* color: #000; */
+        text-shadow: 0 0 5px #000, 0 0 10px #000, 0 0 15px #000, 0 0 20px #fff, 0 0 5px #fff, 0 0 10px #fff, 0 0 10px #fff, 0 0 10px #fff;
     }
     
     .value {
         position: absolute;
         right: 15px;
-        margin-top: 15px;
+        top: 80px;
+        /* margin-top: 15px; */
+        font-size: 20px;
+        font-weight: bold;
+        /* color: #000; */
+        text-shadow: 0 0 5px #000, 0 0 10px #000, 0 0 15px #000, 0 0 20px #fff, 0 0 5px #fff, 0 0 10px #fff, 0 0 10px #fff, 0 0 10px #fff;
     }
 
     li {
         list-style-type: none;
         position: relative;
-        margin-top: 30px;
+        margin-top: 5px;
         margin-left: 20px;
         text-align: left;
         

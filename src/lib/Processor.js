@@ -42,25 +42,6 @@ export const orangeTeam = derived(updateState, ($update, set) => {
     }
 });
 
-// export const teams = derived(updateState, ($update, set) => {
-//     if (!$update || !$update.game.teams) return; // Ensure $update and teams are available
-
-//     let orangeTeam = {};
-//     let blueTeam = {};
-
-//     // Iterate over the teams and sort them into the two teams
-//     $update.game.teams.forEach(team => {
-//         if ($update.game.teams[0]) {
-//             blueTeam = team[0]
-//         } else if ($update.game.teams[1]) {
-//             blueTeam = team[1]
-//         }
-//     });
-
-//     // Set the derived store value with both teams
-//     set({ orangeTeam, blueTeam });
-// });
-
 export const targetPlayer = derived(updateState, ($update, set) => {
     if (!$update) return;
 
@@ -92,68 +73,20 @@ export const teamsStore = derived(updateState, ($update, set) => {
     set({ orangeTeam, blueTeam });
 });
 
-// export const orangePlayers = derived(updateState, ($update, set) => {
-//     if (!$update) return;
+export const isOT = derived(updateState, ($update, set) => {
+    if (!$update) return;
 
-//     if($update) {   // This block is executed if $update is truthy.
-//         const orangeTeam = ({players}) => { // The code defines a function orangeTeam that expects an object with a players property.
-//             Object.keys(players).map((id) => {  // The players property is an object where each key (id) represents a player’s ID. Object.keys(players) gets all player IDs.
-//                 if (players[id].team == 0) {    // For each player ID, it checks if players[id].team == 0. If the player is on team 0 (likely the orange team),
-//                     return id;  // it returns the player ID.
-//                 }
-//                 else return;    // Otherwise, it returns undefined (or nothing).
-//             })
-//         };
-//         set(orangeTeam($update)); // Updates the derived store.
-//     } else {
-//         set({});    // If $update is falsy (after the initial check), it will set the orangePlayers store to an empty object {}.
-//     }
-// });
+    if ($update){
+        const isOT = Boolean($update.game.isOT);
+        set(isOT);
+    }
+});
 
-// export const bluePlayers = derived(updateState, ($update, set) => {
-//     if (!$update) return;
+export const isReplay = derived(updateState, ($update, set) => {
+    if (!$update) return;
 
-//     if($update) {   // This block is executed if $update is truthy.
-//         const blueTeam = ({players}) => { // The code defines a function blueTeam that expects an object with a players property.
-//             Object.keys(players).map((id) => {  // The players property is an object where each key (id) represents a player’s ID. Object.keys(players) gets all player IDs.
-//                 if (players[id].team == 0) {    // For each player ID, it checks if players[id].team == 0. If the player is on team 0 (likely the blue team),
-//                     return id;  // it returns the player ID.
-//                 }
-//                 else return;    // Otherwise, it returns undefined (or nothing).
-//             })
-//         };
-//         set(blueTeam($update)); // Updates the derived store.
-//     } else {
-//         set({});    // If $update is falsy (after the initial check), it will set the bluePlayers store to an empty object {}.
-//     }
-// });
-
-// export const allPlayers = derived(updateState, ($update, set) => {
-//     if (!$update) return;
-
-//     if ($update) {
-//     let players = $update.data.players;
-//       let orangePlayers = [];
-//       let bluePlayers = [];
-
-//       Object.keys(players).map((id) => {
-//         if (players[id].team == 1) {
-//           if (players[id].name.length > 13) {
-//             let shorten = players[id].name.split("").slice(0, 15);
-//             shorten.push("...");
-
-//             players[id].name = shorten.join("");
-//           }
-//           orangePlayers.push(players[id]);
-//         } else if (players[id].team == 0) {
-//           if (players[id].name.length > 13) {
-//             let shorten = players[id].name.split("").slice(0, 15);
-//             shorten.push("...");
-
-//             players[id].name = shorten.join("");
-//           }
-//           bluePlayers.push(players[id]);
-//         }
-//       });
-//     }
-// })
+    if ($update){
+        const isRP = Boolean($update.game.isReplay);
+        set(isRP);
+    }
+});

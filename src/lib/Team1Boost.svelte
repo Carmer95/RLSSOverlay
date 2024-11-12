@@ -13,12 +13,17 @@
 <style>
     .boost {
         position: relative;
-        height: 50px;
+        height: 25px;
         background-color: pink;
+        border-radius: 13px 13px 13px 13px;
+        overflow: hidden;
     }
 
     .bg {
         width: 300px;
         background-color: #ff7300;
+        border-radius: 13px 13px 13px 13px;
+        box-shadow: 2px 1px 8px 0px rgba(0,0,0,0.9);
+        direction: rtl;
     }
 </style>

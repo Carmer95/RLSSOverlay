@@ -1,5 +1,4 @@
 import { writable } from "svelte/store";
-// import { allPlayers } from "./Processor";
 
 //Connect to SOS
 const socket = new WebSocket("ws://localhost:49122");
@@ -21,8 +20,7 @@ export const socketMessageStore = writable({
 socket.onmessage = ({ data }) => {
     const parsed = JSON.parse(data);
     console.log("New msg:", parsed);
-    // let players = Object.values(parsed.data.players);
-    // console.log(players);
+    // console.log();
 
     socketMessageStore.set(parsed);
 }

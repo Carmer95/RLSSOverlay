@@ -1,6 +1,6 @@
 <script>
   import Boost from "./lib/Boost.svelte";
-  import { teamsStore, targetPlayer } from "./lib/Processor";
+  import { teamsStore, targetPlayer, isOT, isReplay } from "./lib/Processor";
   import TargetPlayerCard from "./lib/TargetPlayerCard.svelte";
   import Team0Boost from "./lib/Team0Boost.svelte";
   import Team1Boost from "./lib/Team1Boost.svelte";
@@ -11,27 +11,31 @@
 
 <main>
 
-  <div class="scorebug">
-    <Scorebug />
-  </div>
+    <div class="scorebug">
+      <Scorebug />
+    </div>
 
   <h1>RLSS</h1>
 
-  <ul class="blueTeam">
-      {#each Object.keys($teamsStore.blueTeam) as playerId}
-          <li class="name">{$teamsStore.blueTeam[playerId].name}
-            <Team0Boost percent="{$teamsStore.blueTeam[playerId].boost}" />
-          </li>
-      {/each}
-  </ul>
+  {#if $teamsStore}
+    <ul class="blueTeam">
+        {#each Object.keys($teamsStore.blueTeam) as playerId}
+            <li class="player-info"><p class="blue-name">{$teamsStore.blueTeam[playerId].name}</p>
+              <Team0Boost percent="{$teamsStore.blueTeam[playerId].boost}" />
+            </li>
+        {/each}
+    </ul>
+  {/if}
   
-  <ul class="orangeTeam">
-      {#each Object.keys($teamsStore.orangeTeam) as playerId}
-          <li class="name">{$teamsStore.orangeTeam[playerId].name}
-            <Team1Boost percent="{$teamsStore.orangeTeam[playerId].boost}" />
-          </li>
-      {/each}
-  </ul>
+  {#if $teamsStore}
+    <ul class="orangeTeam">
+        {#each Object.keys($teamsStore.orangeTeam) as playerId}
+            <li class="player-info"><p class="orange-name">{$teamsStore.orangeTeam[playerId].name}</p>
+              <Team1Boost percent="{$teamsStore.orangeTeam[playerId].boost}" />
+            </li>
+        {/each}
+    </ul>
+  {/if}
 
   {#if $targetPlayer?.name}
     <div class="currentlySpectating">
@@ -44,9 +48,21 @@
       </div>
     </div>
   {/if}
+
+  <!-- {#if $isOT}
+  <p class="overtime">OVERTIME</p>
+{/if}
+
+{#if $isReplay}
+  <p class="replay">REPLAY</p>
+{/if} -->
+
 </main>
 
 <style>
+main {
+  color: rgb(255, 255, 255);
+}
 
 .scorebug {
   position: absolute;
@@ -55,41 +71,55 @@
 
 h1 {
   position: absolute;
-  margin: auto;
-  width: 100%;
-  top: 120px;
+  top: -20px;
+  right: 100px;
 }
   
 li {
   list-style-type: none;
 }
 
+.blue-name {
+  margin: 0px;
+  position: relative;
+  font-size: 20px;
+  text-shadow: 0 0 5px #FFF, 0 0 10px #FFF, 0 0 15px #FFF, 0 0 20px #000000, 0 0 30px #000000, 0 0 40px #000000, 0 0 55px #000000, 0 0 75px #000000;
+}
+
+.orange-name {
+  margin: 0px;
+  position: relative;
+  font-size: 20px;
+  text-shadow: 0 0 5px #FFF, 0 0 10px #FFF, 0 0 15px #FFF, 0 0 20px #000000, 0 0 30px #000000, 0 0 40px #000000, 0 0 55px #000000, 0 0 75px #000000;
+}
+
 .orangeTeam {
   position: absolute;
   margin: 0;
   right: 5px;
-  top: 50px;
+  top: 100px;
 }
 
 .blueTeam {
   position: absolute;
   margin: 0;
   left: 5px;
-  top: 50px;
+  top: 100px;
   padding: 0;
 }
 
 .boost {
   position: absolute;
-  right: 15px;
-  bottom: 15px;
+  right: 300px;
+  bottom: 300px;
 }
 
 .statCard {
   position: absolute;
   background-color: black;
-  left: 10px;
-  bottom: 10px;
+  left: 15px;
+  bottom: -15px;
+  border-radius: 20%;
 }
 
 </style>
