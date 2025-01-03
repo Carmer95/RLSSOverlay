@@ -13,8 +13,8 @@
 </div>
 
 
-<div class="boost-value">
-    {percent}
+<div class="boost-value-cont">
+    <p class="boost-value">{percent}</p>
 </div>
 
 <style>
@@ -134,11 +134,21 @@
         left: 25px;
     }
 
+    .boost-value-cont {
+        position: relative;
+        height: 54px;
+        width: 100px;
+        display: flex;
+        justify-content: center;
+        top: 33px;
+    }
+
     .boost-value {
         position: absolute;
-        height: 100%;
-        top: 104px;
         z-index: 2;
+        font-size: 36px;
+        font-weight: bolder;
+        margin: auto;
     }
 </style>
 

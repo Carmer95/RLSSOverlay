@@ -11,33 +11,74 @@
 
 <main>
 
-    <div class="scorebug">
+    <!-- <div class="scorebug">
       <Scorebug />
     </div>
 
-  <h1>RLSS</h1>
+  <h1>RLSS</h1> -->
 
+
+  <!-- {#if $teamsStore}
+    <ul class="blueTeam">
+        {#each Object.keys($teamsStore.blueTeam) as playerId}
+            <li class="player-info-b">
+              <div class="blue-name-cont"><p class="blue-name">{$teamsStore.blueTeam[playerId].name}</p></div>
+              <div class="blue-boost-cont"><p class="blue-boost">{$teamsStore.blueTeam[playerId].boost}</p></div>
+              <Team0Boost percent="{$teamsStore.blueTeam[playerId].boost}" />
+            </li>
+        {/each}
+    </ul>
+  {/if} -->
+  
   {#if $teamsStore}
     <ul class="blueTeam">
         {#each Object.keys($teamsStore.blueTeam) as playerId}
-            <li class="player-info"><p class="blue-name">{$teamsStore.blueTeam[playerId].name}</p>
+            <li class="player-info-b">
+              <div class="blue-name-cont">
+                {#if $teamsStore.blueTeam[playerId].name.length > 10}
+                  <p class="blue-name">{$teamsStore.blueTeam[playerId].name}</p>
+                {:else if $teamsStore.blueTeam[playerId].name.length > 6}
+                  <p class="blue-name-m">{$teamsStore.blueTeam[playerId].name}</p>
+                {:else}
+                    <p class="blue-name-l">{$teamsStore.blueTeam[playerId].name}</p>
+                {/if}
+              </div>
+              <div class="blue-boost-cont"><p class="blue-boost">
+                
+                {$teamsStore.blueTeam[playerId].boost}
+              
+              </p></div>
               <Team0Boost percent="{$teamsStore.blueTeam[playerId].boost}" />
             </li>
         {/each}
     </ul>
   {/if}
-  
+
   {#if $teamsStore}
     <ul class="orangeTeam">
         {#each Object.keys($teamsStore.orangeTeam) as playerId}
-            <li class="player-info"><p class="orange-name">{$teamsStore.orangeTeam[playerId].name}</p>
+            <li class="player-info-o">
+              <div class="orange-name-cont">
+                {#if $teamsStore.orangeTeam[playerId].name.length > 9}
+                  <p class="orange-name">{$teamsStore.orangeTeam[playerId].name}</p>
+                {:else if $teamsStore.orangeTeam[playerId].name.length > 6}
+                  <p class="orange-name-m">{$teamsStore.orangeTeam[playerId].name}</p>
+                {:else}
+                    <p class="orange-name-l">{$teamsStore.orangeTeam[playerId].name}</p>
+                {/if}
+              </div>
+              <div class="orange-boost-cont"><p class="orange-boost">
+                
+                {$teamsStore.orangeTeam[playerId].boost}
+              
+              </p></div>
               <Team1Boost percent="{$teamsStore.orangeTeam[playerId].boost}" />
             </li>
         {/each}
     </ul>
   {/if}
 
-  {#if $targetPlayer?.name}
+  <!-- {#if $targetPlayer?.name}
     <div class="currentlySpectating">
       <div class="statCard">
         <TargetPlayerCard />
@@ -47,7 +88,7 @@
         
       </div>
     </div>
-  {/if}
+  {/if} -->
 
   <!-- {#if $isOT}
   <p class="overtime">OVERTIME</p>
@@ -62,6 +103,8 @@
 <style>
 main {
   color: rgb(255, 255, 255);
+  width: 100%;
+  height: 100%;
 }
 
 .scorebug {
@@ -79,48 +122,190 @@ li {
   list-style-type: none;
 }
 
+.blue-name-cont {
+  margin: 0px;
+  position: absolute;
+  width: 100%;
+  text-align: left;
+  left: 28px;
+  max-width: 180px;
+}
+
+.orange-name-cont {
+  margin: 0px;
+  position: absolute;
+  text-align: right;
+  width: 100%;
+  right: 28px;
+  max-width: 180px;
+}
+
 .blue-name {
   margin: 0px;
   position: relative;
-  font-size: 20px;
-  text-shadow: 0 0 5px #FFF, 0 0 10px #FFF, 0 0 15px #FFF, 0 0 20px #000000, 0 0 30px #000000, 0 0 40px #000000, 0 0 55px #000000, 0 0 75px #000000;
+  font-size: 14px;
+  text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 15px #000000;
+  top: 46px;
+  font-family: "Nosifer", serif;
+  color: #ffffff;
 }
+
+.blue-name-m {
+  margin: 0px;
+  position: relative;
+  font-size: 19px;
+  text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 15px #000000;
+  top: 42px;
+  font-family: "Nosifer", serif;
+  color: #ffffff;
+}
+
+.blue-name-l {
+  margin: 0px;
+  position: relative;
+  font-size: 26px;
+  text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 15px #000000;
+  top: 36px;
+  font-family: "Nosifer", serif;
+  color: #ffffff;
+}
+
 
 .orange-name {
   margin: 0px;
   position: relative;
-  font-size: 20px;
-  text-shadow: 0 0 5px #FFF, 0 0 10px #FFF, 0 0 15px #FFF, 0 0 20px #000000, 0 0 30px #000000, 0 0 40px #000000, 0 0 55px #000000, 0 0 75px #000000;
+  font-size: 14px;
+  text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 15px #000000;
+  text-align: right;
+  top: 46px;
+  font-family: "Nosifer", serif;
+  color: #ffffff;
+}
+
+.orange-name-m {
+  margin: 0px;
+  position: relative;
+  font-size: 19px;
+  text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 15px #000000;
+  text-align: right;
+  top: 42px;
+  font-family: "Nosifer", serif;
+  color: #ffffff;
+}
+
+.orange-name-l {
+  margin: 0px;
+  position: relative;
+  font-size: 26px;
+  text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 15px #000000;
+  text-align: right;
+  top: 36px;
+  font-family: "Nosifer", serif;
+  color: #ffffff;
+}
+
+
+.blue-boost-cont {
+  margin: 0px;
+  position: absolute;
+  text-align: center;
+  width: 100px;
+  left: 200px;
+}
+
+.orange-boost-cont {
+  margin: 0px;
+  position: absolute;
+  text-align: center;
+  width: 100px;
+  right: 200px;
+}
+
+.blue-boost {
+  margin: 0px;
+  position: relative;
+  font-size: 36px;
+  text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 15px #000000;
+  top: 20px;
+  font-family: "Pacifico", serif;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.orange-boost {
+  margin: 0px;
+  position: relative;
+  font-size: 36px;
+  text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 15px #000000;
+  top: 20px;
+  font-family: "Pacifico", serif;
+  font-weight: 500;
+  color: #ffffff;
 }
 
 .orangeTeam {
   position: absolute;
   margin: 0;
-  right: 5px;
-  top: 100px;
+  right: 0px;
+  top: 160px;
+  padding: 0;
 }
 
 .blueTeam {
   position: absolute;
   margin: 0;
-  left: 5px;
-  top: 100px;
+  left: 0px;
+  top: 160px;
   padding: 0;
 }
 
 .boost {
   position: absolute;
-  right: 300px;
-  bottom: 300px;
+  height: 240px;
+  width: 240px;
+  right: 50px;
+  bottom: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.currentlySpectating {
+  position: relative;
+  height: 600px;
+  width: 100%;
+  top: 578px;
 }
 
 .statCard {
-  position: absolute;
+position: absolute;
   background-color: black;
-  left: 15px;
-  bottom: -15px;
   border-radius: 20%;
+  bottom: 30px;
+  left: 20px;
 }
+
+.player-info-b {
+  background-image: url('./assets/RLSS_JellyBoost_-_OG_-_L_-_CROPPED.png');
+  background-position: 50% 40%;
+  background-size: cover;
+  height: 90px;
+  width: 300px;
+  border-radius: 0px 0px 0px 30px;
+  display: flex;
+  align-items: start;
+}
+
+.player-info-o {
+  background-image: url('./assets/RLSS_JellyBoost_-_OG_-_R_-_CROPPED.png');
+  background-position: 50% 40%;
+  background-size: cover;
+  height: 90px;
+  width: 300px;
+  border-radius: 0px 0px 30px 0px;
+}
+
+
 
 </style>
 

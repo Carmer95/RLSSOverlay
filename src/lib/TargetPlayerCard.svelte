@@ -38,7 +38,7 @@
         /* background-color: #000; */
         background-image: url('../assets/stats-image.jpg');
         background-position: 40% 50%;
-        bottom: 80px;
+        bottom: 0px;
         position: absolute;
         box-shadow: 5px 5px 8px 0px rgba(0,0,0,0.9);
     }

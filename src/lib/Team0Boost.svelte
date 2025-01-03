@@ -11,18 +11,26 @@
 </div>
 
 <style>
+    .team0bg {
+        height: 50px;
+        max-width: 300px;
+        margin-bottom: 6px;
+    }
+
     .boost {
         position: relative;
-        height: 25px;
+        height: 15px;
         background-color: pink;
         border-radius: 13px 13px 13px 13px;
         overflow: hidden;
     }
 
     .bg {
-        width: 300px;
+        width: 256px;
         background-color: #000288;
         box-shadow: -2px 1px 8px 0px rgba(0,0,0,0.9);
         border-radius: 13px 13px 13px 13px;
+        top: 74px;
+        left: 20px;
     }
 </style>
