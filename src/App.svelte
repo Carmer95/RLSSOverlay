@@ -6,6 +6,22 @@
   import Team1Boost from "./lib/Team1Boost.svelte";
   import Scorebug from "./lib/Scorebug.svelte";
 
+  function truncateName(name) {
+    return name.length > 15 ? name.slice(0, 15) + '...' : name;
+  }
+
+  function getBlueNameClass(name) {
+    if (name.length > 9) return "blue-name";
+    if (name.length > 6) return "blue-name-m";
+    return "blue-name-l";
+  }
+  
+  function getOrangeNameClass(name) {
+    if (name.length > 9) return "orange-name";
+    if (name.length > 6) return "orange-name-m";
+    return "orange-name-l";
+  }
+
   console.log(teamsStore);
 </script>
 
@@ -31,6 +47,24 @@
   {/if} -->
   
   {#if $teamsStore}
+  <ul class="blueTeam">
+    {#each Object.keys($teamsStore.blueTeam) as playerId}
+      <li class="player-info-o">
+        <div class="blue-name-cont">
+          <p class={getBlueNameClass($teamsStore.blueTeam[playerId].name)}>
+            {truncateName($teamsStore.blueTeam[playerId].name)}
+          </p>
+        </div>
+        <div class="blue-boost-cont">
+          <p class="blue-boost">{$teamsStore.blueTeam[playerId].boost}</p>
+        </div>
+        <Team0Boost percent={$teamsStore.blueTeam[playerId].boost} />
+      </li>
+    {/each}
+  </ul>
+{/if}
+  
+  <!-- {#if $teamsStore}
     <ul class="blueTeam">
         {#each Object.keys($teamsStore.blueTeam) as playerId}
             <li class="player-info-b">
@@ -38,7 +72,7 @@
                 {#if $teamsStore.blueTeam[playerId].name.length > 10}
                   <p class="blue-name">{$teamsStore.blueTeam[playerId].name}</p>
                 {:else if $teamsStore.blueTeam[playerId].name.length > 6}
-                  <p class="blue-name-m">{$teamsStore.blueTeam[playerId].name}</p>
+                  <p class="blue-name-m">{truncateName($teamsStore.blueTeam[playerId].name)}</p>
                 {:else}
                     <p class="blue-name-l">{$teamsStore.blueTeam[playerId].name}</p>
                 {/if}
@@ -52,9 +86,27 @@
             </li>
         {/each}
     </ul>
-  {/if}
+  {/if} -->
 
   {#if $teamsStore}
+  <ul class="orangeTeam">
+    {#each Object.keys($teamsStore.orangeTeam) as playerId}
+      <li class="player-info-o">
+        <div class="orange-name-cont">
+          <p class={getOrangeNameClass($teamsStore.orangeTeam[playerId].name)}>
+            {truncateName($teamsStore.orangeTeam[playerId].name)}
+          </p>
+        </div>
+        <div class="orange-boost-cont">
+          <p class="orange-boost">{$teamsStore.orangeTeam[playerId].boost}</p>
+        </div>
+        <Team1Boost percent={$teamsStore.orangeTeam[playerId].boost} />
+      </li>
+    {/each}
+  </ul>
+{/if}
+  
+  <!-- {#if $teamsStore}
     <ul class="orangeTeam">
         {#each Object.keys($teamsStore.orangeTeam) as playerId}
             <li class="player-info-o">
@@ -76,7 +128,7 @@
             </li>
         {/each}
     </ul>
-  {/if}
+  {/if} -->
 
   <!-- {#if $targetPlayer?.name}
     <div class="currentlySpectating">
@@ -129,6 +181,10 @@ li {
   text-align: left;
   left: 28px;
   max-width: 180px;
+  box-shadow: none;
+  outline: none;
+  background-color: transparent;
+  border: none;
 }
 
 .orange-name-cont {
@@ -138,36 +194,49 @@ li {
   width: 100%;
   right: 28px;
   max-width: 180px;
+  box-shadow: none;
+  outline: none;
+  background-color: transparent;
+  border: none;
 }
 
 .blue-name {
   margin: 0px;
   position: relative;
   font-size: 14px;
-  text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 15px #000000;
+  text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 3px #000000;
   top: 46px;
   font-family: "Nosifer", serif;
   color: #ffffff;
+    white-space: nowrap; /* Prevent text from wrapping to the next line */
+    overflow: hidden; /* Hide overflowing text */
+    text-overflow: ellipsis; /* Add ellipsis to indicate truncation */
 }
 
 .blue-name-m {
   margin: 0px;
   position: relative;
   font-size: 19px;
-  text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 15px #000000;
+  text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 3px #000000;
   top: 42px;
   font-family: "Nosifer", serif;
   color: #ffffff;
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
 }
 
 .blue-name-l {
   margin: 0px;
   position: relative;
   font-size: 26px;
-  text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 15px #000000;
+  text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 3px #000000;
   top: 36px;
   font-family: "Nosifer", serif;
   color: #ffffff;
+    white-space: nowrap; /* Prevent text from wrapping to the next line */
+    overflow: hidden; /* Hide overflowing text */
+    text-overflow: ellipsis; /* Add ellipsis to indicate truncation */
 }
 
 
@@ -175,33 +244,42 @@ li {
   margin: 0px;
   position: relative;
   font-size: 14px;
-  text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 15px #000000;
+  text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 3px #000000;
   text-align: right;
   top: 46px;
   font-family: "Nosifer", serif;
   color: #ffffff;
+    white-space: nowrap; /* Prevent text from wrapping to the next line */
+    overflow: hidden; /* Hide overflowing text */
+    text-overflow: ellipsis; /* Add ellipsis to indicate truncation */
 }
 
 .orange-name-m {
   margin: 0px;
   position: relative;
   font-size: 19px;
-  text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 15px #000000;
+  text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 3px #000000;
   text-align: right;
   top: 42px;
   font-family: "Nosifer", serif;
   color: #ffffff;
+    white-space: nowrap; /* Prevent text from wrapping to the next line */
+    overflow: hidden; /* Hide overflowing text */
+    text-overflow: ellipsis; /* Add ellipsis to indicate truncation */
 }
 
 .orange-name-l {
   margin: 0px;
   position: relative;
   font-size: 26px;
-  text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 15px #000000;
+  text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 3px #000000;
   text-align: right;
   top: 36px;
   font-family: "Nosifer", serif;
   color: #ffffff;
+    white-space: nowrap; /* Prevent text from wrapping to the next line */
+    overflow: hidden; /* Hide overflowing text */
+    text-overflow: ellipsis; /* Add ellipsis to indicate truncation */
 }
 
 

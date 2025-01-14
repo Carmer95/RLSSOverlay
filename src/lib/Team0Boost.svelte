@@ -20,14 +20,14 @@
     .boost {
         position: relative;
         height: 15px;
-        background-color: pink;
+        background-color: #000288;
         border-radius: 13px 13px 13px 13px;
         overflow: hidden;
     }
 
     .bg {
         width: 256px;
-        background-color: #000288;
+        background-color: #ffffff;
         box-shadow: -2px 1px 8px 0px rgba(0,0,0,0.9);
         border-radius: 13px 13px 13px 13px;
         top: 74px;
