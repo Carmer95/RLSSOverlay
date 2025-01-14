@@ -6,20 +6,16 @@
   import Team1Boost from "./lib/Team1Boost.svelte";
   import Scorebug from "./lib/Scorebug.svelte";
 
-  function truncateName(name) {
-    return name.length > 15 ? name.slice(0, 15) + '...' : name;
-  }
-
-  function getBlueNameClass(name) {
-    if (name.length > 9) return "blue-name";
-    if (name.length > 6) return "blue-name-m";
-    return "blue-name-l";
-  }
-  
-  function getOrangeNameClass(name) {
-    if (name.length > 9) return "orange-name";
-    if (name.length > 6) return "orange-name-m";
-    return "orange-name-l";
+  function processName(name) {
+    if (name.length > 15) {
+      name.slice(0, 15) + '...';
+    } else if (name.length > 9) {
+      return "s-name";
+    }else if (name.length > 6) {
+      return "m-name";
+    } else {
+      return "l-name";
+    }
   }
 
   console.log(teamsStore);
@@ -51,8 +47,8 @@
     {#each Object.keys($teamsStore.blueTeam) as playerId}
       <li class="player-info-o">
         <div class="blue-name-cont">
-          <p class={getBlueNameClass($teamsStore.blueTeam[playerId].name)}>
-            {truncateName($teamsStore.blueTeam[playerId].name)}
+          <p class={processName($teamsStore.blueTeam[playerId].name)}>
+            {$teamsStore.blueTeam[playerId].name}
           </p>
         </div>
         <div class="blue-boost-cont">
@@ -93,8 +89,8 @@
     {#each Object.keys($teamsStore.orangeTeam) as playerId}
       <li class="player-info-o">
         <div class="orange-name-cont">
-          <p class={getOrangeNameClass($teamsStore.orangeTeam[playerId].name)}>
-            {truncateName($teamsStore.orangeTeam[playerId].name)}
+          <p class={processName($teamsStore.orangeTeam[playerId].name)}>
+            {$teamsStore.orangeTeam[playerId].name}
           </p>
         </div>
         <div class="orange-boost-cont">
@@ -130,17 +126,17 @@
     </ul>
   {/if} -->
 
-  <!-- {#if $targetPlayer?.name}
+  {#if $targetPlayer?.name}
     <div class="currentlySpectating">
       <div class="statCard">
-        <TargetPlayerCard />
+        <!-- <TargetPlayerCard /> -->
       </div>
       <div class="boost">
           <Boost percent="{$targetPlayer.boost}" />
         
       </div>
     </div>
-  {/if} -->
+  {/if}
 
   <!-- {#if $isOT}
   <p class="overtime">OVERTIME</p>
@@ -200,7 +196,7 @@ li {
   border: none;
 }
 
-.blue-name {
+.s-name {
   margin: 0px;
   position: relative;
   font-size: 14px;
@@ -208,9 +204,48 @@ li {
   top: 46px;
   font-family: "Nosifer", serif;
   color: #ffffff;
-    white-space: nowrap; /* Prevent text from wrapping to the next line */
-    overflow: hidden; /* Hide overflowing text */
-    text-overflow: ellipsis; /* Add ellipsis to indicate truncation */
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+}
+
+.m-name {
+  margin: 0px;
+  position: relative;
+  font-size: 19px;
+  text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 3px #000000;
+  top: 42px;
+  font-family: "Nosifer", serif;
+  color: #ffffff;
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+}
+
+.l-name {
+  margin: 0px;
+  position: relative;
+  font-size: 26px;
+  text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 3px #000000;
+  top: 36px;
+  font-family: "Nosifer", serif;
+  color: #ffffff;
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+}
+
+/* .blue-name {
+  margin: 0px;
+  position: relative;
+  font-size: 14px;
+  text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 3px #000000;
+  top: 46px;
+  font-family: "Nosifer", serif;
+  color: #ffffff;
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
 }
 
 .blue-name-m {
@@ -221,9 +256,9 @@ li {
   top: 42px;
   font-family: "Nosifer", serif;
   color: #ffffff;
-    white-space: nowrap; 
-    overflow: hidden; 
-    text-overflow: ellipsis; 
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
 }
 
 .blue-name-l {
@@ -234,9 +269,9 @@ li {
   top: 36px;
   font-family: "Nosifer", serif;
   color: #ffffff;
-    white-space: nowrap; /* Prevent text from wrapping to the next line */
-    overflow: hidden; /* Hide overflowing text */
-    text-overflow: ellipsis; /* Add ellipsis to indicate truncation */
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
 }
 
 
@@ -249,9 +284,9 @@ li {
   top: 46px;
   font-family: "Nosifer", serif;
   color: #ffffff;
-    white-space: nowrap; /* Prevent text from wrapping to the next line */
-    overflow: hidden; /* Hide overflowing text */
-    text-overflow: ellipsis; /* Add ellipsis to indicate truncation */
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
 }
 
 .orange-name-m {
@@ -263,9 +298,9 @@ li {
   top: 42px;
   font-family: "Nosifer", serif;
   color: #ffffff;
-    white-space: nowrap; /* Prevent text from wrapping to the next line */
-    overflow: hidden; /* Hide overflowing text */
-    text-overflow: ellipsis; /* Add ellipsis to indicate truncation */
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
 }
 
 .orange-name-l {
@@ -277,10 +312,10 @@ li {
   top: 36px;
   font-family: "Nosifer", serif;
   color: #ffffff;
-    white-space: nowrap; /* Prevent text from wrapping to the next line */
-    overflow: hidden; /* Hide overflowing text */
-    text-overflow: ellipsis; /* Add ellipsis to indicate truncation */
-}
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+} */
 
 
 .blue-boost-cont {
@@ -346,17 +381,19 @@ li {
   display: flex;
   justify-content: center;
   align-items: center;
+  font-family: "Pacifico", serif;
+  font-weight: 500;
 }
 
 .currentlySpectating {
-  position: relative;
+  position: absolute;
   height: 600px;
   width: 100%;
   top: 578px;
 }
 
 .statCard {
-position: absolute;
+  position: absolute;
   background-color: black;
   border-radius: 20%;
   bottom: 30px;
