@@ -3,14 +3,15 @@
 </script>
 
 <div class="circular-boost">
-    <div class="circle">
-        <div class="progress-circle" style="background: conic-gradient(from 180deg, rgb(255, 255, 0) {percent * 2.7}deg, #ddd {percent * 2.7}deg);">
-        </div>
-    </div>
+    <!-- <div class="circle"> -->
+        <!-- </div> -->
+    <!-- </div> -->
 </div>
 
-<div class="inside-circle">
-</div>
+<div class="progress-circle" style="background: conic-gradient(from 180deg, rgb(0, 0, 255) {percent * 2.7}deg, #b8d3ef {percent * 2.7}deg);"></div>
+
+<!-- <div class="inside-circle">
+</div> -->
 
 
 <div class="boost-value-cont">
@@ -22,10 +23,13 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 240px;
-        height: 240px;
-        z-index: 1;
+        width: 320px;
+        height: 320px;
+        z-index: 3;
         position: absolute;
+        background-image: url('../assets/Boost_Meter_-_Transparent.png');
+        background-position: 50% 50%;
+        background-size: 100%;
     }
 
     .circle {
@@ -42,19 +46,30 @@
 				   100% 0%,
 				   100% 50%
 				   );
-        z-index: 1;
-        position: absolute;
+        z-index: 2;
     }
 
     /* Conic gradient progress starting from the bottom middle (180deg) */
     .progress-circle {
+        top: 5px;
+        right: 5px;
         width: 100%;
         height: 100%;
         border-radius: 50%;
         display: flex;
         justify-content: center;
         align-items: center;
-        background: conic-gradient(rgb(255, 255, 0) 180deg, rgb(255, 255, 0) 90deg, rgb(255, 255, 0) 270deg); /* Dynamically updated */
+        z-index: -2;
+        position: absolute;
+        opacity: 1;
+        background: conic-gradient(rgb(0, 0, 255) 180deg, rgb(0, 0, 255) 90deg, rgb(0, 0, 255) 270deg); /* Dynamically updated */
+        clip-path: polygon(50% 50%, 
+                   50% 100%,
+				   0% 100%,
+				   0% 0%,
+				   100% 0%,
+				   100% 50%
+				   );
         /* clip-path: polygon(50% 50%, 100% 0, 100% 100%, 50% 100%, 0 100%, 0 0); */
         /* clip-path: polygon(50% 50%, 
                    50% 100%,
@@ -63,7 +78,7 @@
 				   100% 0%,
 				   100% 50%
 				   ); */
-        clip-path: polygon(
+        /* clip-path: polygon(
                    90% 50%, 
                    89% 42%, 
                    86% 33%, 
@@ -105,14 +120,11 @@
                    95% 11%, 
                    100% 25%, 
                    100% 50%
-        );
-        z-index: 1;
-        position: absolute;
-        opacity: .77;
+        ); */
     }
 
     /* Inner circle with percentage */
-    .inside-circle {
+    /* .inside-circle {
         width: 192px;
         height: 192px;
         background-color: white;
@@ -123,16 +135,16 @@
         font-size: 48px;
         font-weight: bold;
         color: rgb(255, 255, 255);
-        opacity: 0.5;
+        opacity: 0.0;
         text-shadow: 0 0 5px #FFF, 0 0 10px #FFF, 0 0 15px #FFF, 0 0 20px #000000, 0 0 30px #000000, 0 0 40px #000000, 0 0 55px #000000, 0 0 75px #000000;
         background-image: url('../assets/hsg-logo.png');
         background-position: 50% 48%;
         background-size: 200%;
-        z-index: 2;
+        z-index: 1;
         position: absolute;
         top: 25px;
         left: 25px;
-    }
+    } */
 
     .boost-value-cont {
         position: relative;
@@ -140,15 +152,16 @@
         width: 100px;
         display: flex;
         justify-content: center;
-        top: 33px;
+        top: 13px;
     }
 
     .boost-value {
         position: absolute;
-        z-index: 2;
-        font-size: 36px;
+        z-index: 4;
+        font-size: 56px;
         font-weight: bolder;
         margin: auto;
+        text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 3px #000000;
     }
 </style>
 
