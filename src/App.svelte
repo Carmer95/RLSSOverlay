@@ -1,10 +1,13 @@
 <script>
   import Boost from "./lib/Boost.svelte";
-  import { teamsStore, targetPlayer, isOT, isReplay } from "./lib/Processor";
+  import {  orangeTeam, blueTeam, teamsStore, targetPlayer, isOT, isReplay } from "./lib/Processor";
   import TargetPlayerCard from "./lib/TargetPlayerCard.svelte";
   import Team0Boost from "./lib/Team0Boost.svelte";
   import Team1Boost from "./lib/Team1Boost.svelte";
-  import Scorebug from "./lib/Scorebug.svelte";
+  import Scorebug from "./lib/Scorebug.svelte"; 
+  // import ControlPanel from './ControlPanel.svelte';
+  
+  // let players = [];
 
   function processName(name) {
     if (name.length > 15) {
@@ -22,12 +25,14 @@
 </script>
 
 <main>
+  <!-- <ControlPanel bind:players={players} /> -->
 
-    <!-- <div class="scorebug">
+    <div class="scorebug">
       <Scorebug />
     </div>
 
-  <h1>RLSS</h1> -->
+  <h1>RLSS</h1>
+
 
 
   <!-- {#if $teamsStore}
@@ -45,7 +50,7 @@
   {#if $teamsStore}
   <ul class="blueTeam">
     {#each Object.keys($teamsStore.blueTeam) as playerId}
-      <li class="player-info-o">
+      <li class="player-info-b">
         <div class="blue-name-cont">
           <p class={processName($teamsStore.blueTeam[playerId].name)}>
             {$teamsStore.blueTeam[playerId].name}
@@ -54,7 +59,7 @@
         <div class="blue-boost-cont">
           <p class="blue-boost">{$teamsStore.blueTeam[playerId].boost}</p>
         </div>
-        <Team0Boost percent={$teamsStore.blueTeam[playerId].boost} />
+        <Team0Boost color="#{$blueTeam.color_primary}" percent={$teamsStore.blueTeam[playerId].boost } />
       </li>
     {/each}
   </ul>
@@ -96,7 +101,7 @@
         <div class="orange-boost-cont">
           <p class="orange-boost">{$teamsStore.orangeTeam[playerId].boost}</p>
         </div>
-        <Team1Boost percent={$teamsStore.orangeTeam[playerId].boost} />
+        <Team1Boost color="#{$orangeTeam.color_primary}" percent="{$teamsStore.orangeTeam[playerId].boost}" />
       </li>
     {/each}
   </ul>
@@ -129,11 +134,14 @@
   {#if $targetPlayer?.name}
     <div class="currentlySpectating">
       <div class="statCard">
-        <!-- <TargetPlayerCard /> -->
+        <TargetPlayerCard />
       </div>
       <div class="boost">
-          <Boost percent="{$targetPlayer.boost}" />
-        
+        {#if $targetPlayer.team === 0}
+          <Boost percent="{$targetPlayer.boost}" color="#{$blueTeam.color_primary}" />
+          {:else}
+          <Boost percent="{$targetPlayer.boost}" color="#{$orangeTeam.color_primary}" />
+        {/if}
       </div>
     </div>
   {/if}
@@ -199,9 +207,9 @@ li {
 .s-name {
   margin: 0px;
   position: relative;
-  font-size: 14px;
+  font-size: 11px;
   text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 3px #000000;
-  top: 46px;
+  top: 30px;
   font-family: "Nosifer", serif;
   color: #ffffff;
   white-space: nowrap; 
@@ -212,9 +220,9 @@ li {
 .m-name {
   margin: 0px;
   position: relative;
-  font-size: 19px;
+  font-size: 16px;
   text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 3px #000000;
-  top: 42px;
+  top: 28px;
   font-family: "Nosifer", serif;
   color: #ffffff;
   white-space: nowrap; 
@@ -225,9 +233,9 @@ li {
 .l-name {
   margin: 0px;
   position: relative;
-  font-size: 26px;
+  font-size: 20px;
   text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 3px #000000;
-  top: 36px;
+  top: 26px;
   font-family: "Nosifer", serif;
   color: #ffffff;
   white-space: nowrap; 
@@ -337,9 +345,9 @@ li {
 .blue-boost {
   margin: 0px;
   position: relative;
-  font-size: 36px;
+  font-size: 28px;
   text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 15px #000000;
-  top: 20px;
+  top: 10px;
   font-family: "Pacifico", serif;
   font-weight: 500;
   color: #ffffff;
@@ -348,9 +356,9 @@ li {
 .orange-boost {
   margin: 0px;
   position: relative;
-  font-size: 36px;
+  font-size: 28px;
   text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 15px #000000;
-  top: 20px;
+  top: 10px;
   font-family: "Pacifico", serif;
   font-weight: 500;
   color: #ffffff;
@@ -403,8 +411,8 @@ li {
 .player-info-b {
   background-image: url('./assets/RLSS_JellyBoost_-_OG_-_L_-_CROPPED.png');
   background-position: 50% 40%;
-  background-size: cover;
-  height: 90px;
+  background-size: 300px 140px;
+  height: 62px;
   width: 300px;
   border-radius: 0px 0px 0px 30px;
   display: flex;
@@ -414,8 +422,8 @@ li {
 .player-info-o {
   background-image: url('./assets/RLSS_JellyBoost_-_OG_-_R_-_CROPPED.png');
   background-position: 50% 40%;
-  background-size: cover;
-  height: 90px;
+  background-size: 300px 140px;
+  height: 62px;
   width: 300px;
   border-radius: 0px 0px 30px 0px;
 }

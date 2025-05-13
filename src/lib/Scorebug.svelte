@@ -1,6 +1,6 @@
 <script>
-    import { orangeTeam, blueTeam, timeSeconds } from "./Processor";
-
+    import { orangeTeam, blueTeam, timeSeconds, dataStore, fetchData, startPolling, stopPolling } from "./Processor";
+    import { onMount, onDestroy } from 'svelte';
     // let time_seconds = $updateState.game.time_seconds;
 
     // Function to convert seconds to "minutes:seconds" format
@@ -11,6 +11,40 @@
         // Format remaining seconds to always have 2 digits (e.g., "02" instead of "2")
         return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
     }
+
+    console.log(blueTeam);
+
+  let panelData;
+
+  // Subscribe to the store
+  const unsubscribe = dataStore.subscribe(value => {
+    panelData = value;
+  });
+
+  // Fetch data when component mounts
+  onMount(() => {
+    startPolling(1000);
+    fetchData();
+    return unsubscribe; // Clean up on unmount
+  });
+
+    // let panelData = null;
+    // let error = null;
+
+    // onMount(async () => {
+    //     try {
+    //     const res = await fetch('http://localhost:1234/api/data');
+    //     if (!res.ok) throw new Error('No data received yet');
+    //     panelData = await res.json();
+    //     } catch (err) {
+    //     error = err.message;
+    //     }
+    // });
+
+  onDestroy(() => {
+    stopPolling();
+  });
+
 </script>
 
 <div class="bgBox">
@@ -60,7 +94,7 @@
         </div>
     </div>
     <div class="details">
-        Game x | Best of y
+        Game x | Best of {panelData?.dropdownValue.charAt(7) ?? 'y'}
     </div>
     <div class="team1Ws">
         <div class="w1o">
