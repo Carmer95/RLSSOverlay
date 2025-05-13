@@ -1,6 +1,6 @@
 <script>
-    import { orangeTeam, blueTeam, timeSeconds } from "./Processor";
-
+    import { orangeTeam, blueTeam, timeSeconds, dataStore, fetchData } from "./Processor";
+    import { onMount } from 'svelte';
     // let time_seconds = $updateState.game.time_seconds;
 
     // Function to convert seconds to "minutes:seconds" format
@@ -11,7 +11,33 @@
         // Format remaining seconds to always have 2 digits (e.g., "02" instead of "2")
         return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
     }
+
+    console.log(blueTeam);
+
+
+    let data;
+
+    // Subscribe to the store
+    const unsubscribe = dataStore.subscribe(value => {
+        data = value;
+    });
+
+    // Fetch data when component mounts
+    onMount(() => {
+        fetchData();
+        return unsubscribe; // Clean up on unmount
+    });
+
 </script>
+
+{#if data?.error}
+  <p style="color: red">Error: {data.error}</p>
+{:else if data}
+  <h2>Data from Express Backend</h2>
+  <pre>{JSON.stringify(data, null, 2)}</pre>
+{:else}
+  <p>Loading data...</p>
+{/if}
 
 <div class="bgBox">
     <div class="blue-info">

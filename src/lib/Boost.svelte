@@ -1,14 +1,16 @@
 <script>
     export let percent = 33;
+    export let color = '#b8d3ef';
 </script>
 
 <div class="circular-boost">
-    <!-- <div class="circle"> -->
-        <!-- </div> -->
-    <!-- </div> -->
+    <div class="one-third">
+    </div>
+    <div class="two-thirds">
+    </div>
 </div>
 
-<div class="progress-circle" style="background: conic-gradient(from 180deg, rgb(0, 0, 255) {percent * 2.7}deg, #b8d3ef {percent * 2.7}deg);"></div>
+<div class="progress-circle " style="background: conic-gradient(from 180deg, {color} {percent * 2.7}deg, #b8d3ef {percent * 2.7}deg);"></div>
 
 <!-- <div class="inside-circle">
 </div> -->
@@ -31,6 +33,24 @@
         background-position: 50% 50%;
         background-size: 100%;
     }
+
+    .one-third {
+        height: 6px;
+        width: 30px;
+        background-color: #000000;
+        position: absolute;
+        left: 38px;
+        top: 160px;
+    }
+
+.two-thirds {
+    height: 30px;
+    width: 6px;
+    background-color: #000000;
+    position: absolute;
+    top: 50px;
+    left: 146px;
+}
 
     .circle {
         width: 244px;
