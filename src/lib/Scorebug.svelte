@@ -1,6 +1,6 @@
 <script>
-    import { orangeTeam, blueTeam, timeSeconds, dataStore, fetchData } from "./Processor";
-    import { onMount } from 'svelte';
+    import { orangeTeam, blueTeam, timeSeconds, dataStore, fetchData, startPolling, stopPolling } from "./Processor";
+    import { onMount, onDestroy } from 'svelte';
     // let time_seconds = $updateState.game.time_seconds;
 
     // Function to convert seconds to "minutes:seconds" format
@@ -14,30 +14,38 @@
 
     console.log(blueTeam);
 
+  let panelData;
 
-    let data;
+  // Subscribe to the store
+  const unsubscribe = dataStore.subscribe(value => {
+    panelData = value;
+  });
 
-    // Subscribe to the store
-    const unsubscribe = dataStore.subscribe(value => {
-        data = value;
-    });
+  // Fetch data when component mounts
+  onMount(() => {
+    startPolling(1000);
+    fetchData();
+    return unsubscribe; // Clean up on unmount
+  });
 
-    // Fetch data when component mounts
-    onMount(() => {
-        fetchData();
-        return unsubscribe; // Clean up on unmount
-    });
+    // let panelData = null;
+    // let error = null;
+
+    // onMount(async () => {
+    //     try {
+    //     const res = await fetch('http://localhost:1234/api/data');
+    //     if (!res.ok) throw new Error('No data received yet');
+    //     panelData = await res.json();
+    //     } catch (err) {
+    //     error = err.message;
+    //     }
+    // });
+
+  onDestroy(() => {
+    stopPolling();
+  });
 
 </script>
-
-{#if data?.error}
-  <p style="color: red">Error: {data.error}</p>
-{:else if data}
-  <h2>Data from Express Backend</h2>
-  <pre>{JSON.stringify(data, null, 2)}</pre>
-{:else}
-  <p>Loading data...</p>
-{/if}
 
 <div class="bgBox">
     <div class="blue-info">
@@ -86,7 +94,7 @@
         </div>
     </div>
     <div class="details">
-        Game x | Best of y
+        Game x | Best of {panelData?.dropdownValue.charAt(7) ?? 'y'}
     </div>
     <div class="team1Ws">
         <div class="w1o">

@@ -105,3 +105,13 @@ export async function fetchData() {
     dataStore.set({ error: error.message });
   }
 }
+
+let interval;
+export function startPolling(ms = 1000) {
+  fetchData(); // immediate
+  interval = setInterval(fetchData, ms);
+}
+
+export function stopPolling() {
+  clearInterval(interval);
+}
