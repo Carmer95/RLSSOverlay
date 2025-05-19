@@ -31,15 +31,15 @@
 <style>
     .stats {
         width: 910px;
-        height: 300px;
+        height: 240px;
         /* border-bottom-left-radius: 20%;
         border-bottom-right-radius: 20%; */
         /* background-color: #000; */
         background-image: url('../assets/Status_Box_-_Rough_V.3.mdp.png');
         background-position: 40% 40%;
-        background-size: 910px 300px;
-        bottom: -20px;
-        left: -20px;
+        background-size: 910px 240px;
+        bottom: -30px;
+        left: -24px;
         position: absolute;
         /* box-shadow: 5px 5px 8px 0px rgba(0,0,0,0.9); */
     }
@@ -50,7 +50,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        top: 114px;
+        top: 86px;
         left: 180px;
         width: 150px;
         height: 60px;
@@ -69,7 +69,7 @@
         display: flex;
         flex-direction: row;
         width: 700px;
-        top: 214px;
+        top: 164px;
         font-size: 20px;
         font-weight: bold;
         /* color: #000; */
@@ -81,7 +81,7 @@
         display: flex;
         flex-direction: row;
         right: 15px;
-        top: 250px;
+        top: 200px;
         margin-right: 15px;
         /* margin-top: 15px; */
         font-size: 20px;
@@ -108,28 +108,28 @@
     .goals-val{
         position: absolute;
         margin: auto;
-        left: 184px;
+        left: 187px;
         top: 4px;
     }
 
     .shots-val{
         position: absolute;
         margin: auto;
-        left: 286px;
+        left: 288px;
         top: 4px;
     }
 
     .assists-val{
         position: absolute;
         margin: auto;
-        left: 394px;
+        left: 396px;
         top: 4px;
     }
 
     .saves-val{
         position: absolute;
         margin: auto;
-        left: 500px;
+        left: 504px;
         top: 4px;
     }
 </style>

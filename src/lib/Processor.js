@@ -92,17 +92,17 @@ export const isReplay = derived(updateState, ($update, set) => {
     }
 });
 
-export const dataStore = writable(null);
+export const panelDataStore = writable(null);
 
 export async function fetchData() {
   try {
     const res = await fetch('http://localhost:1234/api/data');
     if (!res.ok) throw new Error('Failed to fetch data');
     const data = await res.json();
-    dataStore.set(data);
+    panelDataStore.set(data);
   } catch (error) {
     console.error('Error fetching data:', error);
-    dataStore.set({ error: error.message });
+    panelDataStore.set({ error: error.message });
   }
 }
 
