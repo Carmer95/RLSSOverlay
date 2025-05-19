@@ -4,19 +4,54 @@ import bodyParser from 'body-parser';
 
 const app = express();
 const PORT = 1234; // Port for App 2
-let panelData = null;
+// let panelData = null;
+let currentGame = 1;
+let bestOf = 5;
 
 app.use(cors()); // Allow cross-origin requests
 app.use(bodyParser.json()); // Parse incoming JSON requests
 
-// Endpoint to receive data
 app.post('/api/data', (req, res) => {
-  panelData = req.body;
-  console.log('Data received:', panelData);
+  const data = req.body;
 
-  // Respond to App 1
-  res.status(200).json({ message: 'Data received successfully', receivedData: panelData });
+  // Example: increment game only when control panel says to
+  if (data.incrementGame) {
+    currentGame += 1;
+  }
+
+  // Optional: allow reset
+  if (data.resetGame) {
+    currentGame = 1;
+  }
+
+  // Optional: manually override
+  if (typeof data.setGameNumber === 'number') {
+    currentGame = data.setGameNumber;
+  }
+
+  // Update best-of if needed
+  if (typeof data.bestOf === 'number') {
+    bestOf = data.bestOf;
+  }
+
+  const fullPayload = {
+    ...data,
+    currentGame,
+    bestOf,
+  };
+
+  console.log('Updated state:', fullPayload);
+  res.status(200).json({ message: 'Data received', data: fullPayload });
 });
+
+// Endpoint to receive data
+// app.post('/api/data', (req, res) => {
+//   panelData = req.body;
+//   console.log('Data received:', panelData);
+
+//   // Respond to App 1
+//   res.status(200).json({ message: 'Data received successfully', receivedData: panelData });
+// });
 
 app.get('/api/data', (req, res) => {
   console.log(res);
