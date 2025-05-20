@@ -28,6 +28,8 @@ app.post('/api/data', (req, res) => {
     incrementBlueWin,
     incrementOrangeWin,
     resetWins,
+    blueWins,
+    orangeWins
   } = req.body;
 
   // Handle "Next Game"
@@ -72,8 +74,18 @@ app.post('/api/data', (req, res) => {
     return res.json({ message: 'Wins reset', panelData });
   }
 
-  console.log('Updated state:', message , panelData);
-  res.status(200).json({ message: 'Data received', data: panelData });
+  if (typeof blueWins === 'number') {
+    panelData.blueWins = blueWins;
+    return res.json({ message: `Blue wins set to ${blueWins}`, panelData });
+  }
+
+  if (typeof orangeWins === 'number') {
+    panelData.orangeWins = orangeWins;
+    return res.json({ message: `Orange wins set to ${orangeWins}`, panelData });
+  }
+
+  console.log('Updated state:', panelData);
+  res.status(200).json({ message: 'Data received with no changes', data: panelData });
 });
 
 
