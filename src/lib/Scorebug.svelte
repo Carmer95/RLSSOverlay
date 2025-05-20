@@ -5,33 +5,31 @@
 
     // Function to convert seconds to "minutes:seconds" format
     function formatTime(seconds) {
-        const minutes = Math.floor(seconds / 60);   // Get the number of full minutes
-        const remainingSeconds = seconds % 60;      // Get the remaining seconds
-
-        // Format remaining seconds to always have 2 digits (e.g., "02" instead of "2")
+        if (typeof seconds !== 'number' || isNaN(seconds)) return '0:00';
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
         return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
     }
 
     console.log(blueTeam);
 
     let panelData;
-
-    // Subscribe to the store
-    const unsubscribe = panelDataStore.subscribe(value => {
-        panelData = value;
-    });
+    let unsubscribe;
 
     // Fetch data when component mounts
     onMount(() => {
         startPolling(1000);
         fetchData();
-        return unsubscribe; // Clean up on unmount
+        unsubscribe = panelDataStore.subscribe(value => {
+            panelData = value;
+            console.log(panelData);
+        });
     });
 
     onDestroy(() => {
     stopPolling();
+    unsubscribe();
   });
-
 </script>
 
 <div class="bgBox">
@@ -51,7 +49,11 @@
             </div>
         </div>
         <div class="time">
-            {formatTime($timeSeconds)}
+            {#if typeof $timeSeconds === 'number' && $timeSeconds >= 0}
+                {formatTime($timeSeconds)}
+            {:else}
+                0:00
+            {/if}
         </div>
         <div class="orange-score-bg">
             <div class="orange-score">
@@ -70,29 +72,21 @@
     </div>
 </div>
 <div class="match-info">
-    <div class="team0Ws">
-        <div class="w4b">
-        </div>
-        <div class="w3b">
-        </div>
-        <div class="w2b">
-        </div>
-        <div class="w1b">
-        </div>
-    </div>
-    <div class="details">
+    <div class="team0Ws bWinBoxContainer">
+        <!-- Blue wins -->
+        {#each Array(Math.ceil((panelData?.bestOf ?? 5) / 2)).fill(0).map((_, i) => i) as i}
+            <div class="winBox {i < (panelData?.blueWins ?? 0) ? 'blue active' : ''}"></div>
+        {/each}
+      </div>
+      <div class="details">
         Game {panelData?.currentGame ?? '1'} | Best of {panelData?.bestOf ?? '5'}
-    </div>
-    <div class="team1Ws">
-        <div class="w1o">
-        </div>
-        <div class="w2o">
-        </div>
-        <div class="w3o">
-        </div>
-        <div class="w4o">
-        </div>
-    </div>
+      </div>
+      <div class="team1Ws oWinBoxContainer">
+        <!-- Orange wins -->
+        {#each Array(Math.ceil((panelData?.bestOf ?? 5) / 2)).fill(0).map((_, i) => i) as i}
+            <div class="winBox {i < (panelData?.orangeWins ?? 0) ? 'orange active' : ''}"></div>
+        {/each}
+      </div>
 </div>
 
 <style>
@@ -174,82 +168,44 @@
         background-color: rgba(255, 255, 255, 0);
     }
 
-
-    .team0Ws {
-        width: 150px;
-        height: 15px;
-        background-color: grey;
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        row-gap: 1.5rem;
-        border-right: 3px;
-        border-radius: 5px;
-        margin-right: 100px;
-        background-color: rgba(255, 255, 255, 0);
-    }
-
     .details {
         width: 150px;
     }
 
-    .team1Ws {
-        width: 150px;
+    .bWinBoxContainer {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        gap: 4px; /* space between boxes */
+        justify-content: flex-start;
+    }
+
+    .oWinBoxContainer {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        gap: 4px; /* space between boxes */
+    }
+    
+    .winBox {
+        width: 15px;
         height: 15px;
-        background-color: grey;
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        border-left: #000;
-        border-radius: 5px;
-        margin-left: 100px;
-        background-color: rgba(255, 255, 255, 0);
+        margin: 2px;
+        border-radius: 10px;
+        background-color: transparent;
+        border: 1px solid #fff;
+        transition: background-color 0.3s ease, border 0.3s ease;
     }
 
-    .w1b {
-        background-color: #fff;
-        border-radius: 10px;
-        margin: 2px;
+    /* Active (filled) win boxes for each team */
+    .winBox.active.blue {
+        background-color: #000288;
+        border: none;
     }
 
-    .w1o {
-        background-color: #fff;
-        border-radius: 10px;
-        margin: 2px;
-    }
-
-    .w2b {
-        background-color: #fff;
-        border-radius: 10px;
-        margin: 2px;
-    }
-
-    .w2o {
-        background-color: #fff;
-        border-radius: 10px;
-        margin: 2px;
-    }
-
-    .w3b {
-        background-color: #fff;
-        border-radius: 10px;
-        margin: 2px;
-    }
-
-    .w3o {
-        background-color: #fff;
-        border-radius: 10px;
-        margin: 2px;
-    }
-
-    .w4b {
-        background-color: #fff;
-        border-radius: 10px;
-        margin: 2px;
-    }
-
-    .w4o {
-        background-color: #fff;
-        border-radius: 10px;
-        margin: 2px;
+    .winBox.active.orange {
+        background-color: #ff7300;
+        border: none;
     }
 
     .bgBox {

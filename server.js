@@ -4,57 +4,84 @@ import bodyParser from 'body-parser';
 
 const app = express();
 const PORT = 1234; // Port for App 2
-// let panelData = null;
-let currentGame = 1;
-let bestOf = 5;
 
-app.use(cors()); // Allow cross-origin requests
-app.use(bodyParser.json()); // Parse incoming JSON requests
+// Global in-memory state
+let panelData = {
+  currentGame: 1,
+  bestOf: 5,
+  blueWins: 0,
+  orangeWins: 0,
+  blueLogo: '',
+  orangeLogo: ''
+};
 
+app.use(cors());
+app.use(bodyParser.json());
+
+// Handle POST requests to update data
 app.post('/api/data', (req, res) => {
-  const data = req.body;
-
-  // Example: increment game only when control panel says to
-  if (data.incrementGame) {
-    currentGame += 1;
-  }
-
-  // Optional: allow reset
-  if (data.resetGame) {
-    currentGame = 1;
-  }
-
-  // Optional: manually override
-  if (typeof data.setGameNumber === 'number') {
-    currentGame = data.setGameNumber;
-  }
-
-  // Update best-of if needed
-  if (typeof data.bestOf === 'number') {
-    bestOf = data.bestOf;
-  }
-
-  const fullPayload = {
-    ...data,
-    currentGame,
+  const {
+    incrementGame,
+    resetGame,
+    setGameNumber,
     bestOf,
-  };
+    incrementBlueWin,
+    incrementOrangeWin,
+    resetWins,
+  } = req.body;
 
-  console.log('Updated state:', fullPayload);
-  res.status(200).json({ message: 'Data received', data: fullPayload });
+  // Handle "Next Game"
+  if (incrementGame) {
+    panelData.currentGame += 1;
+    return res.json({ message: 'Game incremented', panelData });
+  }
+
+  // Handle "Reset Game"
+  if (resetGame) {
+    panelData.currentGame = 1;
+    panelData.blueWins = 0;
+    panelData.orangeWins = 0;
+    return res.json({ message: 'Series reset', panelData });
+  }
+
+  // Handle manual override
+  if (typeof setGameNumber === 'number') {
+    panelData.currentGame = setGameNumber;
+    return res.json({ message: `Game set to ${setGameNumber}`, panelData });
+  }
+
+  // Update best-of value
+  if (typeof bestOf === 'number') {
+    panelData.bestOf = bestOf;
+    return res.json({ message: `Best of set to ${bestOf}`, panelData });
+  }
+
+  if (incrementBlueWin) {
+    panelData.blueWins += 1;
+    return res.json({ message: `Blue wins incremented to ${panelData.blueWins}`, panelData });
+  }
+
+  if (incrementOrangeWin) {
+    panelData.orangeWins += 1;
+    return res.json({ message: `Orange wins incremented to ${panelData.orangeWins}`, panelData });
+  }
+
+  if (resetWins) {
+    panelData.blueWins = 0;
+    panelData.orangeWins = 0;
+    return res.json({ message: 'Wins reset', panelData });
+  }
+
+  console.log('Updated state:', message , panelData);
+  res.status(200).json({ message: 'Data received', data: panelData });
 });
 
-// Endpoint to receive data
-// app.post('/api/data', (req, res) => {
-//   panelData = req.body;
-//   console.log('Data received:', panelData);
 
-//   // Respond to App 1
-//   res.status(200).json({ message: 'Data received successfully', receivedData: panelData });
-// });
 
+
+
+// Handle GET requests to return current panel data
 app.get('/api/data', (req, res) => {
-  console.log(res);
   if (panelData && Object.keys(panelData).length > 0) {
     res.status(200).json(panelData);
   } else {
@@ -62,11 +89,12 @@ app.get('/api/data', (req, res) => {
   }
 });
 
+
 app.get('/', (req, res) => {
   res.send('Server is up');
 });
 
-app.listen(PORT, () => {
-  console.log(`App 2 running on http://localhost:${PORT}`);
-});
 
+app.listen(PORT, () => {
+  console.log(`Overlay server running at http://localhost:${PORT}`);
+});
