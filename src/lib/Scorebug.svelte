@@ -13,22 +13,22 @@
 
     console.log(blueTeam);
 
-    let panelData;
-    let unsubscribe;
+    // let panelData;
+    // let unsubscribe;
 
     // Fetch data when component mounts
     onMount(() => {
         startPolling(1000);
         fetchData();
-        unsubscribe = panelDataStore.subscribe(value => {
-            panelData = value;
-            console.log(panelData);
-        });
+        // unsubscribe = panelDataStore.subscribe(value => {
+        //     panelData = value;
+        //     console.log(panelData);
+        // });
     });
 
     onDestroy(() => {
     stopPolling();
-    unsubscribe();
+    // unsubscribe();
   });
 </script>
 
@@ -74,17 +74,17 @@
 <div class="match-info">
     <div class="team0Ws bWinBoxContainer">
         <!-- Blue wins -->
-        {#each Array(Math.ceil((panelData?.bestOf ?? 5) / 2)).fill(0).map((_, i) => i) as i}
-            <div class="winBox {i < (panelData?.blueWins ?? 0) ? 'blue active' : ''}"></div>
-        {/each}
+        {#each Array(Math.ceil(($panelDataStore?.bestOf ?? 5) / 2)).fill(0).map((_, i) => i) as i (i)}
+    <div class="winBox {((Math.ceil(($panelDataStore?.bestOf ?? 5) / 2) - 1 - i) < ($panelDataStore?.blueWins ?? 0)) ? 'blue active' : ''}"></div>
+{/each}
       </div>
       <div class="details">
-        Game {panelData?.currentGame ?? '1'} | Best of {panelData?.bestOf ?? '5'}
+        Game {$panelDataStore?.currentGame ?? '1'} | Best of {$panelDataStore?.bestOf ?? '5'}
       </div>
       <div class="team1Ws oWinBoxContainer">
         <!-- Orange wins -->
-        {#each Array(Math.ceil((panelData?.bestOf ?? 5) / 2)).fill(0).map((_, i) => i) as i}
-            <div class="winBox {i < (panelData?.orangeWins ?? 0) ? 'orange active' : ''}"></div>
+        {#each Array(Math.ceil(($panelDataStore?.bestOf ?? 5) / 2)).fill(0).map((_, i) => i) as i}
+            <div class="winBox {i < ($panelDataStore?.orangeWins ?? 0) ? 'orange active' : ''}"></div>
         {/each}
       </div>
 </div>
@@ -177,7 +177,7 @@
         flex-direction: row;
         justify-content: center;
         gap: 4px; /* space between boxes */
-        justify-content: flex-start;
+        justify-content: flex-end;
     }
 
     .oWinBoxContainer {
@@ -185,6 +185,7 @@
         flex-direction: row;
         justify-content: center;
         gap: 4px; /* space between boxes */
+        justify-content: flex-start;
     }
     
     .winBox {
