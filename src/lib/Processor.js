@@ -17,7 +17,7 @@ export const timeSeconds = derived(updateState, ($update, set) => {
         const time = $update.game.time_seconds;
         set(time);
     } else {
-        set({});
+        set(null);
     }
 });
 
@@ -100,6 +100,7 @@ export async function fetchData() {
     if (!res.ok) throw new Error('Failed to fetch data');
     const data = await res.json();
     panelDataStore.set(data);
+    console.log(panelDataStore)
   } catch (error) {
     console.error('Error fetching data:', error);
     panelDataStore.set({ error: error.message });
@@ -115,3 +116,70 @@ export function startPolling(ms = 1000) {
 export function stopPolling() {
   clearInterval(interval);
 }
+
+// Track last game init to debounce
+let lastGameInitTime = 0;
+let lastMatchEndTime = 0;
+
+// Listen for game:initialized and notify backend
+socketMessageStore.subscribe(($msg) => {
+    if (!$msg || typeof $msg.event !== 'string') return;
+  
+    // Handle game start (increment game number)
+    if ($msg.event === 'game:initialized') {
+      const now = Date.now();
+  
+      // Avoid sending duplicate increments
+      if (now - lastGameInitTime > 3000) {
+        lastGameInitTime = now;
+  
+        fetch('http://localhost:1234/api/data', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ incrementGame: true })
+        })
+        .then(res => res.json())
+        .then(data => {
+          console.log('Incremented game on server:', data);
+          panelDataStore.set(null);
+          fetchData();
+        })
+        .catch(err => console.error('Error incrementing game:', err));
+      }
+    }
+  
+    // Handle match ended (auto update winner)
+    if ($msg.event === 'game:match_ended') {
+      const winner = $msg.data?.winner_team_num;
+  
+      if (winner === 0) {
+        // Blue team won
+        fetch('http://localhost:1234/api/data', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ incrementBlueWin: true })
+        })
+        .then(res => res.json())
+        .then(data => {
+          console.log('Blue win incremented:', data);
+          panelDataStore.set(null);
+          fetchData();
+        })
+        .catch(err => console.error('Error updating blue win:', err));
+      } else if (winner === 1) {
+        // Orange team won
+        fetch('http://localhost:1234/api/data', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ incrementOrangeWin: true })
+        })
+        .then(res => res.json())
+        .then(data => {
+          console.log('Orange win incremented:', data);
+          panelDataStore.set(null);
+          fetchData();
+        })
+        .catch(err => console.error('Error updating orange win:', err));
+      }
+    }
+  });
