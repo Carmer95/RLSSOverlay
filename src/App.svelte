@@ -1,25 +1,28 @@
 <script>
   import Boost from "./lib/Boost.svelte";
-  import {  orangeTeam, blueTeam, teamsStore, targetPlayer, isOT, isReplay } from "./lib/Processor";
+  import {  orangeTeam, blueTeam, teamsStore, targetPlayer, isOT, isReplay, postGameVisible } from "./lib/Processor";
   import TargetPlayerCard from "./lib/TargetPlayerCard.svelte";
   import Team0Boost from "./lib/Team0Boost.svelte";
   import Team1Boost from "./lib/Team1Boost.svelte";
   import Scorebug from "./lib/Scorebug.svelte"; 
+  import PostGame from "./lib/PostGame.svelte";
   // import ControlPanel from './ControlPanel.svelte';
   
   // let players = [];
 
   function processName(name) {
-    if (name.length > 15) {
-      name.slice(0, 15) + '...';
-    } else if (name.length > 9) {
-      return "s-name";
-    }else if (name.length > 6) {
-      return "m-name";
-    } else {
-      return "l-name";
-    }
+  if (name.length > 9) {
+    return "s-name";
+  } else if (name.length > 6) {
+    return "m-name";
+  } else {
+    return "l-name";
   }
+}
+
+function truncateName(name, limit = 15) {
+  return name.length > limit ? name.slice(0, limit) + '...' : name;
+}
 
   console.log(teamsStore);
 </script>
@@ -27,6 +30,10 @@
 <main>
   <!-- <ControlPanel bind:players={players} /> -->
 
+  {#if $postGameVisible}
+    <PostGame />
+    <Scorebug />
+  {:else}
     <div class="scorebug">
       <Scorebug />
     </div>
@@ -53,7 +60,7 @@
       <li class="player-info-b">
         <div class="blue-name-cont">
           <p class={processName($teamsStore.blueTeam[playerId].name)}>
-            {$teamsStore.blueTeam[playerId].name}
+            {truncateName($teamsStore.blueTeam[playerId].name)}
           </p>
         </div>
         <div class="blue-boost-cont">
@@ -95,7 +102,7 @@
       <li class="player-info-o">
         <div class="orange-name-cont">
           <p class={processName($teamsStore.orangeTeam[playerId].name)}>
-            {$teamsStore.orangeTeam[playerId].name}
+            {truncateName($teamsStore.orangeTeam[playerId].name)}
           </p>
         </div>
         <div class="orange-boost-cont">
@@ -139,20 +146,36 @@
       <div class="boost">
         {#if $targetPlayer.team === 0}
           <Boost percent="{$targetPlayer.boost}" color="#{$blueTeam.color_primary}" />
-          {:else}
+        {:else}
           <Boost percent="{$targetPlayer.boost}" color="#{$orangeTeam.color_primary}" />
         {/if}
       </div>
     </div>
   {/if}
-
-  <!-- {#if $isOT}
+{/if}
+  {#if $isOT}
   <p class="overtime">OVERTIME</p>
 {/if}
 
 {#if $isReplay}
   <p class="replay">REPLAY</p>
-{/if} -->
+  {#if $targetPlayer?.name}
+    <div class="currentlySpectating">
+      <div class="statCard">
+        <TargetPlayerCard />
+      </div>
+      <div class="boost">
+        {#if $targetPlayer.team === 0}
+          <Boost percent="{$targetPlayer.boost}" color="#{$blueTeam.color_primary}" />
+        {:else}
+          <Boost percent="{$targetPlayer.boost}" color="#{$orangeTeam.color_primary}" />
+        {/if}
+      </div>
+    </div>
+  {/if}
+{/if}
+
+
 
 </main>
 
@@ -176,6 +199,24 @@ h1 {
   
 li {
   list-style-type: none;
+}
+
+.replay {
+  font-size: 32px;
+  color: #0077ff;
+  position: absolute;
+  bottom: 160px;
+  left: 20px;
+  z-index: 3;
+}
+
+.overtime {
+  font-size: 32px;
+  color: #0077ff;
+  position: absolute;
+  top: 110px;
+  right: 640px;
+  z-index: 3;
 }
 
 .blue-name-cont {
@@ -207,9 +248,9 @@ li {
 .s-name {
   margin: 0px;
   position: relative;
-  font-size: 11px;
+  font-size: 13px;
   text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 3px #000000;
-  top: 30px;
+  top: 27px;
   font-family: "Nosifer", serif;
   color: #ffffff;
   white-space: nowrap; 

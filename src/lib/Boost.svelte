@@ -52,7 +52,7 @@
     left: 146px;
 }
 
-    .circle {
+    /* .circle {
         width: 244px;
         height: 244px;
         position: relative;
@@ -67,7 +67,7 @@
 				   100% 50%
 				   );
         z-index: 2;
-    }
+    } */
 
     /* Conic gradient progress starting from the bottom middle (180deg) */
     .progress-circle {

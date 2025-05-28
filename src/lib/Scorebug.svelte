@@ -1,5 +1,5 @@
 <script>
-    import { orangeTeam, blueTeam, timeSeconds, panelDataStore, fetchData, startPolling, stopPolling } from "./Processor";
+    import { orangeTeam, blueTeam, timeSeconds, panelDataStore, startPollingPanelData, stopPollingPanelData } from "./Processor";
     import { onMount, onDestroy } from 'svelte';
     // let time_seconds = $updateState.game.time_seconds;
 
@@ -11,25 +11,20 @@
         return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
     }
 
-    console.log(blueTeam);
+    console.log($blueTeam);
 
     // let panelData;
     // let unsubscribe;
 
     // Fetch data when component mounts
     onMount(() => {
-        startPolling(1000);
-        fetchData();
-        // unsubscribe = panelDataStore.subscribe(value => {
-        //     panelData = value;
-        //     console.log(panelData);
-        // });
+        startPollingPanelData(1000);
+        console.log($panelDataStore)
     });
 
     onDestroy(() => {
-    stopPolling();
-    // unsubscribe();
-  });
+        stopPollingPanelData();
+    });
 </script>
 
 <div class="bgBox">
@@ -102,7 +97,7 @@
     .blue-score-bg {
         display: flex;
         justify-content: center;
-        height: 90%;
+        height: 120px;
         width: 60px;
         background-color: rgba(0, 2, 136, .8);
         border-radius: 20%;
@@ -141,7 +136,7 @@
     .orange-score-bg {
         display: flex;
         justify-content: center;
-        height: 90%;
+        height: 120px;
         width: 60px;
         background-color: rgba(255, 115, 0, .8);
         border-radius: 20%;

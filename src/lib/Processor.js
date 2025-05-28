@@ -1,178 +1,3 @@
-// import { derived, writable } from 'svelte/store';
-// import { socketMessageStore } from './socket';
-
-// // === Writable Panel Store ===
-// export const panelDataStore = writable(null);
-
-// // === Utility: DRY Network POST ===
-// async function postToPanel(data) {
-//   try {
-//     const res = await fetch('http://localhost:1234/api/data', {
-//       method: 'POST',
-//       headers: { 'Content-Type': 'application/json' },
-//       body: JSON.stringify(data),
-//     });
-//     const json = await res.json();
-//     panelDataStore.set(null);
-//     fetchData();
-//     return json;
-//   } catch (err) {
-//     console.error('Panel POST error:', err);
-//     return null;
-//   }
-// }
-
-// // === Update State Store ===
-// export const updateState = derived(socketMessageStore, ($msg, set) => {
-//   if ($msg?.event === 'game:update_state') {
-//     set($msg.data);
-//   }
-// });
-
-// // === Derived Stores ===
-// export const timeSeconds = derived(updateState, ($update, set) => {
-//   if ($update?.game && 'time_seconds' in $update.game) {
-//     set($update.game.time_seconds);
-//   }
-// });
-
-// export const teams = derived(updateState, ($update, set) => {
-//   if ($update?.game?.teams?.length >= 2) {
-//     set({ blue: $update.game.teams[0], orange: $update.game.teams[1] });
-//   }
-// });
-
-// export const targetPlayer = derived(updateState, ($update, set) => {
-//   const targetId = $update?.game?.target;
-//   if ($update?.game?.hasTarget && $update.players?.[targetId]) {
-//     set($update.players[targetId]);
-//   }
-// });
-
-// export const teamsStore = derived(updateState, ($update, set) => {
-//   if (!$update?.players) return;
-//   const blueTeam = {}, orangeTeam = {};
-
-//   Object.entries($update.players).forEach(([id, player]) => {
-//     if (player.team === 0) blueTeam[id] = player;
-//     else if (player.team === 1) orangeTeam[id] = player;
-//   });
-
-//   set({ blueTeam, orangeTeam });
-// });
-
-// export const isOT = derived(updateState, ($update, set) => {
-//   if ('isOT' in $update?.game) {
-//     set(Boolean($update.game.isOT));
-//   }
-// });
-
-// export const isReplay = derived(updateState, ($update, set) => {
-//   if ('isReplay' in $update?.game) {
-//     set(Boolean($update.game.isReplay));
-//   }
-// });
-
-// export const currentGameNumber = derived(panelDataStore, ($panel) => $panel?.currentGame || 1);
-
-// export const gamePhase = derived(updateState, ($update, set) => {
-//   const { hasWinner, isReplay, isOT, target, time_seconds } = $update?.game || {};
-//   if (hasWinner) set('postgame');
-//   else if (isReplay) set('replay');
-//   else if (typeof time_seconds === 'number') set('ingame');
-//   else set('pregame');
-// });
-
-// export const blueTeam = derived(teamsStore, ($teams) => $teams?.blueTeam);
-// export const orangeTeam = derived(teamsStore, ($teams) => $teams?.orangeTeam);
-
-// // === Fetch and Polling ===
-// export async function fetchData() {
-//   try {
-//     const res = await fetch('http://localhost:1234/api/data');
-//     if (!res.ok) throw new Error('Failed to fetch data');
-//     const data = await res.json();
-//     panelDataStore.set(data);
-//   } catch (error) {
-//     console.error('Error fetching data:', error);
-//     panelDataStore.set({ error: error.message });
-//   }
-// }
-
-// let interval;
-// export function startPolling(ms = 1000) {
-//   fetchData();
-//   interval = setInterval(fetchData, ms);
-// }
-
-// export function stopPolling() {
-//   clearInterval(interval);
-// }
-
-// // === Game Event Handlers ===
-// let lastGameInitTime = 0;
-// let lastMatchEndTime = 0;
-
-// socketMessageStore.subscribe(($msg) => {
-//   if (!$msg?.event) return;
-
-//   if ($msg.event === 'game:initialized') {
-//     const now = Date.now();
-//     if (now - lastGameInitTime > 3000) {
-//       lastGameInitTime = now;
-//       postToPanel({ incrementGame: true }).then(data => console.log('Incremented game:', data));
-//     }
-//   }
-
-//   if ($msg.event === 'game:match_ended') {
-//     const winner = $msg.data?.winner_team_num;
-//     if (winner === 0) {
-//       postToPanel({ incrementBlueWin: true }).then(data => console.log('Blue win incremented:', data));
-//     } else if (winner === 1) {
-//       postToPanel({ incrementOrangeWin: true }).then(data => console.log('Orange win incremented:', data));
-//     }
-//   }
-// });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 import { derived } from "svelte/store";
@@ -269,94 +94,88 @@ export const isReplay = derived(updateState, ($update, set) => {
     }
 });
 
+export const postGameVisible = writable(false);
+
+// Listen for the match ended event
+socketMessageStore.subscribe(($msg) => {
+  if (!$msg || typeof $msg.event !== 'string') return;
+
+  if ($msg.event === 'game:match_ended') {
+    postGameVisible.set(true);
+  }
+
+  // Optionally reset visibility if a new game starts
+  if ($msg.event === 'game:initialized') {
+    postGameVisible.set(false);
+  }
+});
+
 export const panelDataStore = writable(null);
 
-export async function fetchData() {
+const API_URL = 'http://localhost:1234/api/data';
+
+async function fetchPanelData() {
   try {
-    const res = await fetch('http://localhost:1234/api/data');
-    if (!res.ok) throw new Error('Failed to fetch data');
+    const res = await fetch(API_URL);
+    if (!res.ok) throw new Error('Failed to fetch panel data');
     const data = await res.json();
     panelDataStore.set(data);
-    console.log(panelDataStore)
   } catch (error) {
-    console.error('Error fetching data:', error);
+    console.error('Panel data fetch error:', error);
     panelDataStore.set({ error: error.message });
   }
 }
 
 let interval;
-export function startPolling(ms = 1000) {
-  fetchData(); // immediate
-  interval = setInterval(fetchData, ms);
+export function startPollingPanelData(ms = 1000) {
+  fetchPanelData(); // fetch immediately
+  interval = setInterval(fetchPanelData, ms);
 }
 
-export function stopPolling() {
+export function stopPollingPanelData() {
   clearInterval(interval);
 }
 
-// Track last game init to debounce
-let lastGameInitTime = 0;
-let lastMatchEndTime = 0;
+// --- Backend update helpers ---
+function postUpdate(body) {
+  return fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  })
+  .then(res => res.json())
+  .then(data => {
+    panelDataStore.set(null);
+    fetchPanelData();
+    return data;
+  })
+  .catch(err => console.error('Panel data update error:', err));
+}
 
-// Listen for game:initialized and notify backend
+// --- Event listener for auto updates ---
+let lastGameInit = 0;
 socketMessageStore.subscribe(($msg) => {
-    if (!$msg || typeof $msg.event !== 'string') return;
-  
-    // Handle game start (increment game number)
-    if ($msg.event === 'game:initialized') {
-      const now = Date.now();
-  
-      // Avoid sending duplicate increments
-      if (now - lastGameInitTime > 3000) {
-        lastGameInitTime = now;
-  
-        fetch('http://localhost:1234/api/data', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ incrementGame: true })
-        })
-        .then(res => res.json())
-        .then(data => {
-          console.log('Incremented game on server:', data);
-          panelDataStore.set(null);
-          fetchData();
-        })
-        .catch(err => console.error('Error incrementing game:', err));
-      }
+  if (!$msg || typeof $msg.event !== 'string') return;
+
+  const now = Date.now();
+
+  if ($msg.event === 'game:initialized' && now - lastGameInit > 3000) {
+    lastGameInit = now;
+    postUpdate({ incrementGame: true }).then(data =>
+      console.log('Game incremented:', data)
+    );
+  }
+
+  if ($msg.event === 'game:match_ended') {
+    const winner = $msg.data?.winner_team_num;
+    if (winner === 0) {
+      postUpdate({ incrementBlueWin: true }).then(data =>
+        console.log('Blue win incremented:', data)
+      );
+    } else if (winner === 1) {
+      postUpdate({ incrementOrangeWin: true }).then(data =>
+        console.log('Orange win incremented:', data)
+      );
     }
-  
-    // Handle match ended (auto update winner)
-    if ($msg.event === 'game:match_ended') {
-      const winner = $msg.data?.winner_team_num;
-  
-      if (winner === 0) {
-        // Blue team won
-        fetch('http://localhost:1234/api/data', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ incrementBlueWin: true })
-        })
-        .then(res => res.json())
-        .then(data => {
-          console.log('Blue win incremented:', data);
-          panelDataStore.set(null);
-          fetchData();
-        })
-        .catch(err => console.error('Error updating blue win:', err));
-      } else if (winner === 1) {
-        // Orange team won
-        fetch('http://localhost:1234/api/data', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ incrementOrangeWin: true })
-        })
-        .then(res => res.json())
-        .then(data => {
-          console.log('Orange win incremented:', data);
-          panelDataStore.set(null);
-          fetchData();
-        })
-        .catch(err => console.error('Error updating orange win:', err));
-      }
-    }
-  });
+  }
+});
