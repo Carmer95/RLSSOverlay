@@ -5,8 +5,20 @@
 
 <div class="circular-boost">
     <div class="one-third">
+    <div class="one-third-one-third">
+    </div>
+    <div class="two-third-one-third">
+    </div>
     </div>
     <div class="two-thirds">
+    <div class="one-third-second-third">
+    </div>
+    <div class="two-third-second-third">
+    </div>
+    </div>
+    <div class="one-third-third-third">
+    </div>
+    <div class="two-third-third-third">
     </div>
 </div>
 
@@ -35,22 +47,82 @@
     }
 
     .one-third {
-        height: 6px;
-        width: 30px;
+        height: 4px;
+        width: 22px;
         background-color: #000000;
         position: absolute;
         left: 38px;
         top: 160px;
     }
 
-.two-thirds {
-    height: 30px;
-    width: 6px;
-    background-color: #000000;
-    position: absolute;
-    top: 50px;
-    left: 146px;
-}
+    .two-thirds {
+        height: 22px;
+        width: 4px;
+        background-color: #000000;
+        position: absolute;
+        top: 50px;
+        left: 152px;
+    }
+
+    .one-third-one-third {
+        height: 1.5px;
+        width: 13px;
+        background-color: #000000;
+        position: absolute;
+        left: 51px;
+        top: 100px;
+        rotate: 120deg;
+    }
+
+    .two-third-one-third {
+        height: 1.5px;
+        width: 13px;
+        background-color: #000000;
+        position: absolute;
+        left: 14px;
+        top: 58px;
+        rotate: 150deg;
+    }
+
+    .one-third-second-third {
+        height: 1.5px;
+        width: 13px;
+        background-color: #000000;
+        position: absolute;
+        right: 90px;
+        top: 60px;
+        rotate: 210deg;
+    }
+
+    .two-third-second-third {
+        height: 1.5px;
+        width: 13px;
+        background-color: #000000;
+        position: absolute;
+        right: 50px;
+        top: 20px;
+        rotate: 240deg;
+    }
+
+    .one-third-third-third {
+        height: 1.5px;
+        width: 13px;
+        background-color: #000000;
+        position: absolute;
+        right: 100px;
+        top: 71px;
+        rotate: 300deg;
+    }
+
+    .two-third-third-third {
+        height: 1.5px;
+        width: 13px;
+        background-color: #000000;
+        position: absolute;
+        right: 57px;
+        top: 120px;
+        rotate: 330deg;
+    }
 
     /* .circle {
         width: 244px;

@@ -31,8 +31,10 @@ function truncateName(name, limit = 15) {
   <!-- <ControlPanel bind:players={players} /> -->
 
   {#if $postGameVisible}
-    <PostGame />
+  <div class="overlay-container">
     <Scorebug />
+    <PostGame />
+</div>
   {:else}
     <div class="scorebug">
       <Scorebug />
@@ -191,10 +193,15 @@ main {
   width: 100%;
 }
 
+.postgame {
+  position: absolute;
+  width: 100%;
+}
+
 h1 {
   position: absolute;
   top: -20px;
-  right: 100px;
+  right: 400px;
 }
   
 li {
@@ -203,11 +210,13 @@ li {
 
 .replay {
   font-size: 32px;
-  color: #0077ff;
+  font-weight: 500;
+  color: #0004ff;
   position: absolute;
-  bottom: 160px;
-  left: 20px;
+  bottom: 166px;
+  left: 26px;
   z-index: 3;
+  text-shadow: 0 0 5px #FFF, 0 0 20px #ffffff, 0 0 30px #000000;
 }
 
 .overtime {
@@ -218,6 +227,14 @@ li {
   right: 640px;
   z-index: 3;
 }
+
+.overlay-container {
+    position: relative;
+    width: 1920px;
+    height: 1080px;
+    pointer-events: none; /* optional: allows clicks to pass through */
+}
+
 
 .blue-name-cont {
   margin: 0px;
@@ -250,7 +267,7 @@ li {
   position: relative;
   font-size: 13px;
   text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 3px #000000;
-  top: 27px;
+  top: 30px;
   font-family: "Nosifer", serif;
   color: #ffffff;
   white-space: nowrap; 
@@ -263,7 +280,7 @@ li {
   position: relative;
   font-size: 16px;
   text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 3px #000000;
-  top: 28px;
+  top: 26px;
   font-family: "Nosifer", serif;
   color: #ffffff;
   white-space: nowrap; 
@@ -276,7 +293,7 @@ li {
   position: relative;
   font-size: 20px;
   text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 3px #000000;
-  top: 26px;
+  top: 24px;
   font-family: "Nosifer", serif;
   color: #ffffff;
   white-space: nowrap; 
@@ -438,7 +455,7 @@ li {
   position: absolute;
   height: 600px;
   width: 100%;
-  top: 578px;
+  top: 480px;
 }
 
 .statCard {

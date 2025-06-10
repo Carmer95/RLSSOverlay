@@ -1,5 +1,5 @@
 <script>
-    import { targetPlayer } from "./Processor";
+    import { targetPlayer, mvpPlayer  } from "./Processor";
 
     // if ($targetPlayer.team == 0) {
     //     const name = document.getElementById('name')
@@ -11,6 +11,9 @@
 <div class="stats">
     <div class="name">
         {$targetPlayer.name}
+        {#if $mvpPlayer?.id === $targetPlayer.id}
+            <span class="mvp-badge">MVP</span>
+        {/if}
     </div>
         <div class="category">
             <li class="score">Score</li>
@@ -61,6 +64,19 @@
         font-size: 28px;
         font-weight: bold;
         /* color: #000; */
+        text-shadow: 0 0 5px #000, 0 0 10px #000, 0 0 15px #000, 0 0 20px #fff, 0 0 5px #fff, 0 0 10px #fff, 0 0 10px #fff, 0 0 10px #fff;
+    }
+
+    .mvp-badge {
+        position: absolute;
+        right: 230px;
+        margin-left: 10px;
+        color: rgb(255, 255, 255);
+        padding: 4px 8px;
+        border-radius: 5px;
+        font-size: 12px;
+        font-weight: bold;
+        text-shadow: none;
         text-shadow: 0 0 5px #000, 0 0 10px #000, 0 0 15px #000, 0 0 20px #fff, 0 0 5px #fff, 0 0 10px #fff, 0 0 10px #fff, 0 0 10px #fff;
     }
 

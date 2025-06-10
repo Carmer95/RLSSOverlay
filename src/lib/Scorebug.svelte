@@ -1,6 +1,7 @@
 <script>
-    import { orangeTeam, blueTeam, timeSeconds, panelDataStore, startPollingPanelData, stopPollingPanelData } from "./Processor";
-    import { onMount, onDestroy } from 'svelte';
+    import { orangeTeam, blueTeam, timeSeconds } from "./Processor";
+    import { panelDataStore } from "./cpsocket";
+    
     // let time_seconds = $updateState.game.time_seconds;
 
     // Function to convert seconds to "minutes:seconds" format
@@ -11,87 +12,101 @@
         return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
     }
 
-    console.log($blueTeam);
+    console.log($panelDataStore);
 
-    // let panelData;
-    // let unsubscribe;
-
-    // Fetch data when component mounts
-    onMount(() => {
-        startPollingPanelData(1000);
-        console.log($panelDataStore)
-    });
-
-    onDestroy(() => {
-        stopPollingPanelData();
-    });
 </script>
-
-<div class="bgBox">
-    <div class="blue-info">
-        <div class="blue-name">
-            {#if $timeSeconds}
-                {$blueTeam.name}
-            {/if}
+<div class="top-bar">
+    <div class="bgBox">
+        <div class="blue-logo">
+            <div style="background-image: url('../assets/Vertices.png')">{$panelDataStore?.blueLogo}</div>
         </div>
-    </div>
-    <div class="game">
-        <div class="blue-score-bg">
-            <div class="blue-score">
+        <div class="blue-info">
+            <div class="blue-name">
                 {#if $timeSeconds}
-                    {$blueTeam.score}
+                    {$blueTeam.name}
                 {/if}
             </div>
         </div>
-        <div class="time">
-            {#if typeof $timeSeconds === 'number' && $timeSeconds >= 0}
-                {formatTime($timeSeconds)}
-            {:else}
-                0:00
-            {/if}
+        <div class="game">
+            <div class="blue-score-bg">
+                <div class="blue-score">
+                    {#if $timeSeconds}
+                        {$blueTeam.score}
+                    {/if}
+                </div>
+            </div>
+            <div class="time">
+                {#if typeof $timeSeconds === 'number' && $timeSeconds >= 0}
+                    {formatTime($timeSeconds)}
+                {:else}
+                    0:00
+                {/if}
+            </div>
+            <div class="orange-score-bg">
+                <div class="orange-score">
+                    {#if $timeSeconds}
+                        {$orangeTeam.score}
+                    {/if}
+                </div>
+            </div>
         </div>
-        <div class="orange-score-bg">
-            <div class="orange-score">
+        <div class="orange-info">
+            <div class="orange-name">
                 {#if $timeSeconds}
-                    {$orangeTeam.score}
+                    {$orangeTeam.name}
                 {/if}
             </div>
         </div>
-    </div>
-    <div class="orange-info">
-        <div class="orange-name">
-            {#if $timeSeconds}
-                {$orangeTeam.name}
-            {/if}
+        <div class="orange-logo">
+            <p>{$panelDataStore?.orangeLogo}</p>
         </div>
     </div>
-</div>
-<div class="match-info">
-    <div class="team0Ws bWinBoxContainer">
-        <!-- Blue wins -->
-        {#each Array(Math.ceil(($panelDataStore?.bestOf ?? 5) / 2)).fill(0).map((_, i) => i) as i (i)}
-    <div class="winBox {((Math.ceil(($panelDataStore?.bestOf ?? 5) / 2) - 1 - i) < ($panelDataStore?.blueWins ?? 0)) ? 'blue active' : ''}"></div>
-{/each}
-      </div>
-      <div class="details">
-        Game {$panelDataStore?.currentGame ?? '1'} | Best of {$panelDataStore?.bestOf ?? '5'}
-      </div>
-      <div class="team1Ws oWinBoxContainer">
-        <!-- Orange wins -->
-        {#each Array(Math.ceil(($panelDataStore?.bestOf ?? 5) / 2)).fill(0).map((_, i) => i) as i}
-            <div class="winBox {i < ($panelDataStore?.orangeWins ?? 0) ? 'orange active' : ''}"></div>
-        {/each}
-      </div>
+    <div class="match-info">
+        <div class="team0Ws bWinBoxContainer">
+            <!-- Blue wins -->
+            {#each Array(Math.ceil(($panelDataStore?.bestOf ?? 5) / 2)).fill(0).map((_, i) => i) as i (i)}
+        <div class="winBox {((Math.ceil(($panelDataStore?.bestOf ?? 5) / 2) - 1 - i) < ($panelDataStore?.blueWins ?? 0)) ? 'blue active' : ''}"></div>
+    {/each}
+        </div>
+        <div class="details">
+            Game {$panelDataStore?.currentGame ?? '1'} | Best of {$panelDataStore?.bestOf ?? '5'}
+        </div>
+        <div class="team1Ws oWinBoxContainer">
+            <!-- Orange wins -->
+            {#each Array(Math.ceil(($panelDataStore?.bestOf ?? 5) / 2)).fill(0).map((_, i) => i) as i}
+                <div class="winBox {i < ($panelDataStore?.orangeWins ?? 0) ? 'orange active' : ''}"></div>
+            {/each}
+        </div>
+    </div>
 </div>
 
 <style>
-    .blue-info {
-        position: relative;
+.top-bar{
+    height: 120px;
+    width: 1080px;
+    position: absolute;
+}
+
+    .blue-logo {
+        position: absolute;
         display: flex;
-        left: 40px;
+        left: 10px;
         font-size: 32px;
-        justify-content: start;
-        width: 100%;
+        justify-content: center;
+        align-items: center;
+        width: 100px;
+        height: 100px;
+        background-position: 50% 50%;
+        background-size: 100%;
+    }
+
+    .blue-info {
+        position: absolute;
+        display: flex;
+        left: 110px;
+        font-size: 32px;
+        justify-content: end;
+        width: 250px;
     }
 
     .blue-score-bg {
@@ -124,13 +139,24 @@
         align-items: center;
     }
 
-    .orange-info {
-        position: relative;
+    .orange-logo {
+        position: absolute;
         display: flex;
-        right: 40px;
+        right: 10px;
         font-size: 30px;
-        justify-content: end;
-        width: 100%;
+        justify-content: center;
+        align-items: center;
+        width: 100px;
+        height: 100px;
+    }
+
+    .orange-info {
+        position: absolute;
+        display: flex;
+        right: 114px;
+        font-size: 30px;
+        justify-content: start;
+        width: 250px;
     }
 
     .orange-score-bg {
@@ -153,6 +179,11 @@
     }
 
     .match-info {
+        position: absolute;
+        z-index: 5;
+        margin: auto;
+        top: 124px;
+        left: 614px;
         width: 690px;
         height: 20px;
         background-color: #000;
@@ -161,6 +192,8 @@
         margin: auto;
         border-radius: 5px;
         background-color: rgba(255, 255, 255, 0);
+        color: rgb(255, 255, 255);
+        text-shadow: 0 0 5px #FFF, 0 0 20px #000000;
     }
 
     .details {
@@ -205,9 +238,12 @@
     }
 
     .bgBox {
+        position: relative;
+        z-index: 5;
         border-radius: 7px 7px 23px 23px;
-        width: 800px;
+        width: 1000px;
         height: 120px;
+        left: 420px;
         background-color: #000;
         color: rgb(255, 255, 255);
         display: flex;

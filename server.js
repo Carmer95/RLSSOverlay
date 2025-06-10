@@ -1,49 +1,129 @@
-import express from 'express';
-import cors from 'cors';
-import bodyParser from 'body-parser';
 import http from 'http';
-import { WebSocketServer } from 'ws';
+import WebSocket, { WebSocketServer } from 'ws';
 
-const app = express();
-const PORT = 1234; // Port for App 2
+// Config
+const PORT = 1234;
 
-// Global in-memory state
+// In-memory panel data
 let panelData = {
   currentGame: 1,
   bestOf: 5,
   blueWins: 0,
   orangeWins: 0,
   blueLogo: '',
-  orangeLogo: ''
+  orangeLogo: '',
+  startSeries: false
 };
 
-app.use(cors());
-app.use(bodyParser.json());
-
-// Create an HTTP server from Express app
-const server = http.createServer(app);
-
-// Create WebSocket server using the same HTTP server
+// Create HTTP server (only needed to bootstrap WS)
+const server = http.createServer();
 const wss = new WebSocketServer({ server });
 
+// Broadcast function
 function broadcastPanelData() {
   const message = JSON.stringify({ type: 'panelData', data: panelData });
-  wss.clients.forEach(client => {
-    if (client.readyState === client.OPEN) {
+  wss.clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
       client.send(message);
     }
   });
 }
 
+// Handle WebSocket connections
 wss.on('connection', (ws) => {
   console.log('WebSocket client connected');
-
-  // Send current panelData on connection
   ws.send(JSON.stringify({ type: 'panelData', data: panelData }));
 
-  ws.on('message', (message) => {
-    console.log('Received message from client:', message);
-    // You could handle incoming WS messages here if needed
+  ws.on('message', (data) => {
+    try {
+      const msg = JSON.parse(data.toString());
+      let changed = false;
+
+      if (msg.incrementGame) {
+        if (typeof panelData.bestOf !== 'number' || panelData.bestOf < 1) {
+          panelData.bestOf = 5;
+          console.warn('Invalid or missing bestOf. Defaulting to 5.');
+        }
+
+        panelData.currentGame += 1;
+        if (panelData.currentGame > panelData.bestOf) {
+          panelData.currentGame = 1;
+        }
+        changed = true;
+      }
+
+      if (msg.resetGame) {
+        panelData.currentGame = 1;
+        panelData.blueWins = 0;
+        panelData.orangeWins = 0;
+        panelData.startSeries = false;
+        changed = true;
+      }
+
+      if (typeof msg.setGameNumber === 'number') {
+        panelData.currentGame = msg.setGameNumber;
+        changed = true;
+      }
+
+      if (typeof msg.bestOf === 'number') {
+        panelData.bestOf = msg.bestOf;
+        changed = true;
+      }
+
+      if (msg.incrementBlueWin) {
+        panelData.blueWins += 1;
+        changed = true;
+      }
+
+      if (msg.incrementOrangeWin) {
+        panelData.orangeWins += 1;
+        changed = true;
+      }
+
+      if (msg.resetWins) {
+        panelData.blueWins = 0;
+        panelData.orangeWins = 0;
+        changed = true;
+      }
+
+      if (typeof msg.blueWins === 'number') {
+        panelData.blueWins = msg.blueWins;
+        changed = true;
+      }
+
+      if (typeof msg.orangeWins === 'number') {
+        panelData.orangeWins = msg.orangeWins;
+        changed = true;
+      }
+
+      if (typeof msg.blueLogo === 'string') {
+        const trimmed = msg.blueLogo.trim();
+        if (panelData.blueLogo !== trimmed) {
+          panelData.blueLogo = trimmed;
+          changed = true;
+        }
+      }
+
+      if (typeof msg.orangeLogo === 'string') {
+        const trimmed = msg.orangeLogo.trim();
+        if (panelData.orangeLogo !== trimmed) {
+          panelData.orangeLogo = trimmed;
+          changed = true;
+        }
+      }
+
+      if ('startSeries' in msg) {
+        panelData.startSeries = msg.startSeries;
+        changed = true;
+      }
+
+      if (changed) {
+        console.log('Broadcasting updated panelData:', panelData);
+        broadcastPanelData();
+      }
+    } catch (err) {
+      console.error('Error parsing WebSocket message:', err);
+    }
   });
 
   ws.on('close', () => {
@@ -51,119 +131,7 @@ wss.on('connection', (ws) => {
   });
 });
 
-// Handle POST requests to update data
-app.post('/api/data', (req, res) => {
-  const {
-    incrementGame,
-    resetGame,
-    setGameNumber,
-    bestOf,
-    incrementBlueWin,
-    incrementOrangeWin,
-    resetWins,
-    blueWins,
-    orangeWins,
-    blueLogo,
-    orangeLogo
-  } = req.body;
-
-  let changed = false;
-
-  if (incrementGame) {
-    if (typeof panelData.bestOf !== 'number' || panelData.bestOf < 1) {
-      panelData.bestOf = 5;
-      console.warn('Invalid or missing bestOf. Defaulting to 5.');
-    }
-
-    panelData.currentGame += 1;
-
-    if (panelData.currentGame > panelData.bestOf) {
-      panelData.currentGame = 1;
-    }
-    changed = true;
-  }
-
-  if (resetGame) {
-    panelData.currentGame = 1;
-    panelData.blueWins = 0;
-    panelData.orangeWins = 0;
-    changed = true;
-  }
-
-  if (typeof setGameNumber === 'number') {
-    panelData.currentGame = setGameNumber;
-    changed = true;
-  }
-
-  if (typeof bestOf === 'number') {
-    panelData.bestOf = bestOf;
-    changed = true;
-  }
-
-  if (incrementBlueWin) {
-    panelData.blueWins += 1;
-    changed = true;
-  }
-
-  if (incrementOrangeWin) {
-    panelData.orangeWins += 1;
-    changed = true;
-  }
-
-  if (resetWins) {
-    panelData.blueWins = 0;
-    panelData.orangeWins = 0;
-    changed = true;
-  }
-
-  if (typeof blueWins === 'number') {
-    panelData.blueWins = blueWins;
-    changed = true;
-  }
-
-  if (typeof orangeWins === 'number') {
-    panelData.orangeWins = orangeWins;
-    changed = true;
-  }
-
-  if (typeof blueLogo === 'string') {
-  const trimmedBlueLogo = blueLogo.trim();
-  if (panelData.blueLogo !== trimmedBlueLogo) {
-    panelData.blueLogo = trimmedBlueLogo;
-    changed = true;
-  }
-  }
-
-  if (typeof orangeLogo === 'string') {
-    const trimmedOrangeLogo = orangeLogo.trim();
-    if (panelData.orangeLogo !== trimmedOrangeLogo) {
-      panelData.orangeLogo = trimmedOrangeLogo;
-      changed = true;
-    }
-  }
-
-
-  if (changed) {
-    broadcastPanelData();
-    console.log('Broadcasted updated panelData:', panelData);
-  }
-
-  res.json({ message: changed ? 'Panel data updated' : 'No changes applied', panelData });
-});
-
-app.get('/api/data', (req, res) => {
-  if (panelData && Object.keys(panelData).length > 0) {
-    res.status(200).json(panelData);
-  } else {
-    res.status(404).json({ message: 'No data available yet' });
-  }
-});
-
-app.get('/', (req, res) => {
-  res.send('Server is up');
-});
-
-// Listen on the HTTP server, which also handles WebSocket
+// Start server
 server.listen(PORT, () => {
-  console.log(`Server (HTTP + WebSocket) running at http://localhost:${PORT}`);
+  console.log(`WebSocket server running at ws://localhost:${PORT}`);
 });

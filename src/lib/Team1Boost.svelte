@@ -32,7 +32,7 @@
         width: 254px;
         background-color: #ffffff;
         border-radius: 13px 13px 13px 13px;
-        box-shadow: 2px 1px 8px 0px rgba(0,0,0,0.9);
+        box-shadow: 0px 4px 8px 5px rgba(0,0,0,0.9);
         top: 50px;
         left: 26px;
         direction: rtl;
