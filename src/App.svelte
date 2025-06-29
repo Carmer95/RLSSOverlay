@@ -201,7 +201,7 @@ main {
 h1 {
   position: absolute;
   top: -20px;
-  right: 400px;
+  right: 200px;
 }
   
 li {
