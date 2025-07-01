@@ -47,112 +47,6 @@ export const teamsStore = derived(updateState, ($update, set) => {
   set({ blueTeam, orangeTeam });
 });
 
-// Overtime + replay state
-export const isOT = derived(updateState, ($update, set) => {
-  set(Boolean($update?.game?.isOT));
-});
-export const isReplay = derived(updateState, ($update, set) => {
-  set(Boolean($update?.game?.isReplay));
-});
-
-// Post-game UI visibility
-export const postGameVisible = writable(false);
-socketMessageStore.subscribe(($msg) => {
-  if ($msg?.event === 'game:match_ended') {
-    postGameVisible.set(true);
-  } else if ($msg?.event === 'game:initialized') {
-    postGameVisible.set(false);
-  }
-});
-
-// --- WebSocket-only update sender ---
-function sendPanelUpdate(message) {
-  if (controlSocket?.readyState === WebSocket.OPEN) {
-    controlSocket.send(JSON.stringify(message));
-  } else {
-    console.warn('Panel socket not open. Cannot send:', message);
-  }
-}
-
-// --- Game initialization and win logic ---
-let lastGameInit = 0;
-let lastHandledInitId = null;
-let lastHandledGameNumber = null;
-
-socketMessageStore.subscribe(($msg) => {
-  if (!$msg?.event) return;
-
-  const now = Date.now();
-
-  if ($msg.event === 'game:initialized' && now - lastGameInit > 3000) {
-    // Debounce and dedupe
-    const initId = JSON.stringify($msg.data);
-    const debounceExpired = now - lastGameInit > 3000;
-
-    if (initId !== lastHandledInitId && debounceExpired) {
-      lastHandledInitId = initId;
-      lastGameInit = now;
-
-      const { blueWins, orangeWins, startSeries, currentGame, bestOf } = get(panelDataStore);
-      const nextGame = blueWins + orangeWins + 1;
-      if(bestOf === 1) {
-        sendPanelUpdate({ orangeWins: 0, blueWins: 0 });
-        console.log("1v1 Series: Wins reset.");
-      }
-      // Only increment game number if series started
-      if (startSeries) {
-        // Instead of setting currentGame directly, send incrementGame
-        // But only if nextGame > currentGame to avoid duplicates
-        if (nextGame > currentGame) {
-          sendPanelUpdate({ incrementGame: true });
-          console.log(`[Processor] Game initialized, incrementing currentGame to ${nextGame}`);
-        } else {
-          console.log('[Processor] Game initialized but no increment needed');
-        }
-      } else {
-        console.log('[Processor] Series not started, skipping increment');
-      }
-
-      postGameVisible.set(false);
-    } else {
-      console.warn('[Processor] Ignored duplicate game:initialized event');
-    }
-  }
-
-  if ($msg.event === 'game:match_ended') {
-    const panel = get(panelDataStore);
-    const currentGame = panel.currentGame;
-
-      if(panel.bestOf === 1) {
-        const winner = $msg.data?.winner_team_num;
-        if (winner === 0) {
-          sendPanelUpdate({ incrementBlueWin: true });
-          console.log('[Processor] Blue win incremented');
-        } else if (winner === 1) {
-          sendPanelUpdate({ incrementOrangeWin: true });
-          console.log('[Processor] Orange win incremented');
-        }
-      }
-    // Ensure we only handle one match end per game number
-    if (currentGame !== lastHandledGameNumber) {
-      lastHandledGameNumber = currentGame;
-
-      const winner = $msg.data?.winner_team_num;
-      if (winner === 0) {
-        sendPanelUpdate({ incrementBlueWin: true });
-        console.log('[Processor] Blue win incremented');
-      } else if (winner === 1) {
-        sendPanelUpdate({ incrementOrangeWin: true });
-        console.log('[Processor] Orange win incremented');
-      }
-
-      postGameVisible.set(true);
-    } else {
-      console.warn(`[Processor] Ignored duplicate match_ended for game ${currentGame}`);
-    }
-  }
-});
-
 // --- MVP Player ---
 export const mvpPlayer = derived(updateState, ($update, set) => {
   if (!$update?.players) return set(null);
@@ -169,4 +63,154 @@ export const mvpPlayer = derived(updateState, ($update, set) => {
   }
 
   set(topPlayer);
+});
+
+// Overtime + replay state
+export const isOT = derived(updateState, ($update, set) => {
+  set(Boolean($update?.game?.isOT));
+});
+export const isReplay = derived(updateState, ($update, set) => {
+  set(Boolean($update?.game?.isReplay));
+});
+
+// Post-game UI visibility
+export const postGameVisible = writable(false);
+
+// --- Default shape for snapshot ---
+export const postGameSnapshot = writable({
+  blueTeam: {},
+  orangeTeam: {},
+  players: {},
+  winner: null,
+  mvp: null,
+  blueLogo: '',
+  orangeLogo: '',
+});
+
+
+// --- WebSocket-only update sender ---
+function sendPanelUpdate(message) {
+  if (controlSocket?.readyState === WebSocket.OPEN) {
+    controlSocket.send(JSON.stringify(message));
+  } else {
+    console.warn('Panel socket not open. Cannot send:', message);
+  }
+}
+
+// Game control + debounce + tracking
+
+// --- Internal state ---
+let lastHandledGameId = null;
+let lastGameInit = 0;
+let resetTimeout = null;
+
+// --- Match logic ---
+socketMessageStore.subscribe(($msg) => {
+  if (!$msg?.event) return;
+  const now = Date.now();
+
+  if ($msg.event === 'game:initialized') {
+    const panel = get(panelDataStore);
+    const initId = JSON.stringify($msg.data);
+    console.log('New game started. ', panel, ' ', initId, ' ', lastHandledGameId, ' ', lastGameInit );
+    if (initId === lastHandledGameId || now - lastGameInit < 3000) return;
+
+    lastHandledGameId = initId;
+    lastGameInit = now;
+
+    if (!panel.startSeries || panel.seriesOver) {
+      console.log('[Processor] Series not started or already over.');
+      return;
+    }
+
+    // Only increment if we're not already at bestOf
+    const newGame = panel.currentGame + 1;
+    let matchHasEnded = false;
+
+    if(panel.blueWins > 0 || panel.orangeWins > 0){
+      matchHasEnded = true;
+    }
+    
+    console.log(newGame, matchHasEnded);
+    
+    if (newGame <= panel.bestOf && matchHasEnded === true) {
+       sendPanelUpdate({ setGameNumber: newGame });
+       console.log(`[Processor] Incremented currentGame to ${newGame}`);
+    }
+  }
+
+  if ($msg.event === 'game:match_ended') {
+    const panel = get(panelDataStore);
+    const winner = $msg.data?.winner_team_num;
+
+    let updated = false;
+
+    if (!panel.startSeries || panel.seriesOver) {
+      console.log('[Processor] Series not started or already over.');
+      return;
+    }
+
+    if (winner === 0) {
+      sendPanelUpdate({ blueWins: panel.blueWins + 1 });
+      console.log('[Processor] Blue win incremented');
+      updated = true;
+    } else if (winner === 1) {
+      sendPanelUpdate({ orangeWins: panel.orangeWins + 1 });
+      console.log('[Processor] Orange win incremented');
+      updated = true;
+    }
+
+    if (updated) {
+
+      const requiredWins = Math.ceil(panel.bestOf / 2);
+      const blueWins = winner === 0 ? panel.blueWins + 1 : panel.blueWins;
+      const orangeWins = winner === 1 ? panel.orangeWins + 1 : panel.orangeWins;
+
+      if (blueWins >= requiredWins || orangeWins >= requiredWins) {
+        sendPanelUpdate({ seriesOver: true });
+        console.log('[Processor] Series is over');
+      }
+    }
+  }
+  
+  if ($msg.event === 'game:match_destroyed') {
+    postGameVisible.set(false);
+    console.log('[Processor] match_destroyed — postGameVisible set to false');
+  }
+
+  if ($msg.event === 'game:podium_start') {
+    console.log('Podium');
+    const panel = get(panelDataStore);
+    console.log(panel)
+    const state = get(updateState);
+
+    // Capture postgame snapshot
+    const snapshot = {
+      blueTeam: state?.game?.teams?.[0] ?? {},
+      orangeTeam: state?.game?.teams?.[1] ?? {},
+      players: state?.players ?? {},
+      winner: state?.game?.hasWinner ? state.game.winner_team_num : null,
+      mvp: get(mvpPlayer),
+      blueLogo: panel.blueLogo || '',
+      orangeLogo: panel.orangeLogo || '',
+    };
+
+    postGameSnapshot.set(snapshot);
+    console.log(get(postGameSnapshot));
+
+
+    if (panel.seriesOver) {
+      console.log('[Processor] Series complete — resetting in 70 seconds');
+      clearTimeout(resetTimeout);
+      resetTimeout = setTimeout(() => {
+        sendPanelUpdate({ resetGame: true });
+        console.log('[Processor] Series reset after podium');
+      }, 70000);
+    }
+
+    setTimeout(() => {
+      postGameVisible.set(true);
+    }, 5000);
+
+  }
 });

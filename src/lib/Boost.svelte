@@ -52,22 +52,22 @@
         background-color: #000000;
         position: absolute;
         left: 38px;
-        top: 160px;
+        top: 164px;
     }
 
     .two-thirds {
         height: 22px;
-        width: 4px;
+        width: 3px;
         background-color: #000000;
         position: absolute;
         top: 50px;
-        left: 152px;
+        left: 148px;
     }
 
     .one-third-one-third {
         height: 1.5px;
         width: 13px;
-        background-color: #000000;
+        background-color: #b8d3ef;
         position: absolute;
         left: 51px;
         top: 100px;
@@ -77,7 +77,7 @@
     .two-third-one-third {
         height: 1.5px;
         width: 13px;
-        background-color: #000000;
+        background-color: #b8d3ef;
         position: absolute;
         left: 14px;
         top: 58px;
@@ -87,7 +87,7 @@
     .one-third-second-third {
         height: 1.5px;
         width: 13px;
-        background-color: #000000;
+        background-color: #b8d3ef;
         position: absolute;
         right: 90px;
         top: 60px;
@@ -97,7 +97,7 @@
     .two-third-second-third {
         height: 1.5px;
         width: 13px;
-        background-color: #000000;
+        background-color: #b8d3ef;
         position: absolute;
         right: 50px;
         top: 20px;
@@ -107,7 +107,7 @@
     .one-third-third-third {
         height: 1.5px;
         width: 13px;
-        background-color: #000000;
+        background-color: #b8d3ef;
         position: absolute;
         right: 100px;
         top: 71px;
@@ -117,7 +117,7 @@
     .two-third-third-third {
         height: 1.5px;
         width: 13px;
-        background-color: #000000;
+        background-color: #b8d3ef;
         position: absolute;
         right: 57px;
         top: 120px;

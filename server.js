@@ -12,7 +12,8 @@ let panelData = {
   orangeWins: 0,
   blueLogo: '',
   orangeLogo: '',
-  startSeries: false
+  startSeries: false,
+  seriesOver: false
 };
 
 // Create HTTP server (only needed to bootstrap WS)
@@ -39,27 +40,6 @@ wss.on('connection', (ws) => {
       const msg = JSON.parse(data.toString());
       let changed = false;
 
-      if (msg.incrementGame) {
-        if (typeof panelData.bestOf !== 'number' || panelData.bestOf < 1) {
-          panelData.bestOf = 5;
-          console.warn('Invalid or missing bestOf. Defaulting to 5.');
-        }
-
-        panelData.currentGame += 1;
-        if (panelData.currentGame > panelData.bestOf) {
-          panelData.currentGame = 1;
-        }
-        changed = true;
-      }
-
-      if (msg.resetGame) {
-        panelData.currentGame = 1;
-        panelData.blueWins = 0;
-        panelData.orangeWins = 0;
-        panelData.startSeries = false;
-        changed = true;
-      }
-
       if (typeof msg.setGameNumber === 'number') {
         panelData.currentGame = msg.setGameNumber;
         changed = true;
@@ -70,22 +50,6 @@ wss.on('connection', (ws) => {
         changed = true;
       }
 
-      if (msg.incrementBlueWin) {
-        panelData.blueWins += 1;
-        changed = true;
-      }
-
-      if (msg.incrementOrangeWin) {
-        panelData.orangeWins += 1;
-        changed = true;
-      }
-
-      if (msg.resetWins) {
-        panelData.blueWins = 0;
-        panelData.orangeWins = 0;
-        changed = true;
-      }
-
       if (typeof msg.blueWins === 'number') {
         panelData.blueWins = msg.blueWins;
         changed = true;
@@ -93,6 +57,16 @@ wss.on('connection', (ws) => {
 
       if (typeof msg.orangeWins === 'number') {
         panelData.orangeWins = msg.orangeWins;
+        changed = true;
+      }
+
+      if (typeof msg.blueTeam === 'number') {
+        panelData.blueTeam = msg.blueTeam;
+        changed = true;
+      }
+
+      if (typeof msg.orangeTeam === 'number') {
+        panelData.orangeTeam = msg.orangeTeam;
         changed = true;
       }
 
@@ -114,6 +88,23 @@ wss.on('connection', (ws) => {
 
       if ('startSeries' in msg) {
         panelData.startSeries = msg.startSeries;
+        changed = true;
+      }
+
+      if ('seriesOver' in msg) {
+        panelData.seriesOver = msg.seriesOver;
+        changed = true;
+      }
+
+      if (msg.resetGame) {
+        panelData = {
+          ...panelData,
+          currentGame: 1,
+          blueWins: 0,
+          orangeWins: 0,
+          startSeries: false,
+          seriesOver: false
+        };
         changed = true;
       }
 

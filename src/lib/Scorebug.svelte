@@ -1,5 +1,5 @@
 <script>
-    import { orangeTeam, blueTeam, timeSeconds } from "./Processor";
+    import { orangeTeam, blueTeam, timeSeconds, postGameSnapshot } from "./Processor";
     import { panelDataStore } from "./cpsocket";
     
     // let time_seconds = $updateState.game.time_seconds;
@@ -12,21 +12,28 @@
         return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
     }
 
-    console.log($panelDataStore);
+    $: console.log('panelDataStore: ', $panelDataStore, 'Panel store currentGame: ', $panelDataStore.currentGame, 'PostGameSnapshot: ', $postGameSnapshot );
+    $: currentGame = $panelDataStore.currentGame;
 
 </script>
+
 <div class="top-bar">
     <div class="bgBox">
+        <!-- Blue Side -->
         <div class="blue-logo">
-            <div style="background-image: url('../assets/Vertices.png')">{$panelDataStore?.blueLogo}</div>
+            {#if $panelDataStore?.blueLogo}
+                <img src="{$panelDataStore.blueLogo}" alt="Blue Logo" width="90" height="90" />
+            {/if}
         </div>
         <div class="blue-info">
             <div class="blue-name">
                 {#if $timeSeconds}
-                    {$blueTeam.name}
+                    {($postGameSnapshot?.blueTeam?.name || $blueTeam?.name) ?? 'Blue Team'}
                 {/if}
             </div>
         </div>
+
+        <!-- Game Middle Section -->
         <div class="game">
             <div class="blue-score-bg">
                 <div class="blue-score">
@@ -50,17 +57,23 @@
                 </div>
             </div>
         </div>
+
+        <!-- Orange Side -->
         <div class="orange-info">
             <div class="orange-name">
                 {#if $timeSeconds}
-                    {$orangeTeam.name}
+                    {($postGameSnapshot?.orangeTeam?.name || $orangeTeam?.name) ?? 'Orange Team'}
                 {/if}
             </div>
         </div>
         <div class="orange-logo">
-            <p>{$panelDataStore?.orangeLogo}</p>
+            {#if $panelDataStore?.orangeLogo}
+                <img src="{$panelDataStore.orangeLogo}" alt="Orange Logo" width="90" height="90" />
+            {/if}
         </div>
     </div>
+
+    <!-- Match Info -->
     <div class="match-info">
         <div class="team0Ws bWinBoxContainer">
             <!-- Blue wins -->
@@ -69,7 +82,7 @@
     {/each}
         </div>
         <div class="details">
-            Game {$panelDataStore?.currentGame ?? '1'} | Best of {$panelDataStore?.bestOf ?? '5'}
+            Game {currentGame ?? '1'} | Best of {$panelDataStore?.bestOf ?? '5'}
         </div>
         <div class="team1Ws oWinBoxContainer">
             <!-- Orange wins -->
