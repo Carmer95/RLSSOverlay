@@ -7,9 +7,12 @@ export const panelDataStore = writable({
   bestOf: 5,
   blueWins: 0,
   orangeWins: 0,
+  blueTeam: '',
+  orangeTeam: '',
   blueLogo: '',
   orangeLogo: '',
-  startSeries: false
+  startSeries: false,
+  seriesOver: false
 });
 
 export const panelSocketStatus = writable("disconnected");

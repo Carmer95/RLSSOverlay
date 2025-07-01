@@ -69,7 +69,7 @@
 
     .mvp-badge {
         position: absolute;
-        right: 230px;
+        left: 140px;
         margin-left: 10px;
         color: rgb(255, 255, 255);
         padding: 4px 8px;
