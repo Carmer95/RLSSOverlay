@@ -1,5 +1,5 @@
 <script>
-    import { orangeTeam, blueTeam, timeSeconds, postGameSnapshot } from "./Processor";
+    import { orangeTeam, blueTeam, timeSeconds, } from "./Processor";
     import { panelDataStore } from "./cpsocket";
     
     // let time_seconds = $updateState.game.time_seconds;
@@ -12,7 +12,7 @@
         return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
     }
 
-    $: console.log('panelDataStore: ', $panelDataStore, 'Panel store currentGame: ', $panelDataStore.currentGame, 'PostGameSnapshot: ', $postGameSnapshot );
+    $: console.log('panelDataStore: ', $panelDataStore, 'Panel store currentGame: ', $panelDataStore.currentGame );
     $: currentGame = $panelDataStore.currentGame;
 
 </script>
@@ -22,14 +22,14 @@
         <!-- Blue Side -->
         <div class="blue-logo">
             {#if $panelDataStore?.blueLogo}
-                <img src="{$panelDataStore.blueLogo}" alt="Blue Logo" width="90" height="90" />
+                <img class="blueLogo" src={`/TeamLogos/${$panelDataStore.blueLogo}.png`} alt="Blue Logo" width="90" height="90" />
+            {:else}
+                <img class="blueLogo"  src={`/TeamLogos/Vertices.png`} alt="Alt Blue Logo" width="90" height="90" />
             {/if}
         </div>
         <div class="blue-info">
             <div class="blue-name">
-                {#if $timeSeconds}
-                    {($postGameSnapshot?.blueTeam?.name || $blueTeam?.name) ?? 'Blue Team'}
-                {/if}
+                {($blueTeam?.name) ?? 'Blue Team'}
             </div>
         </div>
 
@@ -37,9 +37,7 @@
         <div class="game">
             <div class="blue-score-bg">
                 <div class="blue-score">
-                    {#if $timeSeconds}
-                        {$blueTeam.score}
-                    {/if}
+                    {$blueTeam.score}
                 </div>
             </div>
             <div class="time">
@@ -51,9 +49,7 @@
             </div>
             <div class="orange-score-bg">
                 <div class="orange-score">
-                    {#if $timeSeconds}
-                        {$orangeTeam.score}
-                    {/if}
+                    {$orangeTeam.score}
                 </div>
             </div>
         </div>
@@ -61,14 +57,14 @@
         <!-- Orange Side -->
         <div class="orange-info">
             <div class="orange-name">
-                {#if $timeSeconds}
-                    {($postGameSnapshot?.orangeTeam?.name || $orangeTeam?.name) ?? 'Orange Team'}
-                {/if}
+                {($orangeTeam?.name) ?? 'Orange Team'}
             </div>
         </div>
         <div class="orange-logo">
             {#if $panelDataStore?.orangeLogo}
-                <img src="{$panelDataStore.orangeLogo}" alt="Orange Logo" width="90" height="90" />
+                <img class="orangeLogo" src={`/TeamLogos/${$panelDataStore.orangeLogo}`} alt="Orange Logo" width="90" height="90" />
+            {:else}
+                <img class="orangeLogo" src={`/TeamLogos/RLStockLogo.png`} alt="Alt Orange Logo" width="90" height="90" />
             {/if}
         </div>
     </div>
@@ -94,16 +90,25 @@
 </div>
 
 <style>
-.top-bar{
-    height: 120px;
-    width: 1080px;
-    position: absolute;
-}
+    .top-bar{
+        height: 120px;
+        width: 1080px;
+        position: absolute;
+    }
+
+    .blueLogo {
+        object-fit: contain;
+    }
+
+    .orangeLogo {
+        object-fit: contain;
+    }
 
     .blue-logo {
         position: absolute;
         display: flex;
-        left: 10px;
+        top: 18px;
+        left: 32px;
         font-size: 32px;
         justify-content: center;
         align-items: center;
@@ -116,6 +121,7 @@
     .blue-info {
         position: absolute;
         display: flex;
+        top: 40px;
         left: 110px;
         font-size: 32px;
         justify-content: end;
@@ -127,18 +133,20 @@
         justify-content: center;
         height: 120px;
         width: 60px;
-        background-color: rgba(0, 2, 136, .8);
+        /* background-color: rgba(0, 2, 136, .8); */
         border-radius: 20%;
         margin-right: 16px;
     }
 
     .blue-score {
-        width: 100%;
         font-size: 60px;
         height: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
+        position: absolute;
+        bottom: 18px;
+        right: 576px;
     }
 
     .game {
@@ -152,10 +160,16 @@
         align-items: center;
     }
 
+    .time {
+        position:absolute;
+        top: 32px;
+    }
+
     .orange-logo {
         position: absolute;
         display: flex;
-        right: 10px;
+        right: 32px;
+        top: 18px;
         font-size: 30px;
         justify-content: center;
         align-items: center;
@@ -166,8 +180,9 @@
     .orange-info {
         position: absolute;
         display: flex;
-        right: 114px;
-        font-size: 30px;
+        right: 110px;
+        top: 40px;
+        font-size: 32px;
         justify-content: start;
         width: 250px;
     }
@@ -177,25 +192,27 @@
         justify-content: center;
         height: 120px;
         width: 60px;
-        background-color: rgba(255, 115, 0, .8);
+        /* background-color: rgba(255, 115, 0, .8); */
         border-radius: 20%;
         margin-left: 16px;
     }
 
     .orange-score {
-        width: 100%;
         font-size: 60px;
         height: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
+        position: absolute;
+        bottom: 18px;
+        left: 576px;
     }
 
     .match-info {
         position: absolute;
         z-index: 5;
         margin: auto;
-        top: 124px;
+        top: 122px;
         left: 614px;
         width: 690px;
         height: 20px;
@@ -210,23 +227,37 @@
     }
 
     .details {
-        width: 150px;
+        /* position: absolute; */
+        width: 130px;
+        margin-top: 3px;
+        /* top: 3px;
+        left: 282px; */
+        font-size: 15px;
+        text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.5), 1px -1px 0 rgba(0, 0, 0, 0.5), -1px 1px 0 rgba(0, 0, 0, 0.5), 1px 1px 0 rgba(0, 0, 0, 0.5);
     }
 
     .bWinBoxContainer {
+        /* position: absolute; */
         display: flex;
         flex-direction: row;
         justify-content: center;
         gap: 4px; /* space between boxes */
         justify-content: flex-end;
+        margin-top: 12px;
+        margin-right: 12px;
+        /* left: 170px; */
     }
 
     .oWinBoxContainer {
+        /* position: absolute; */
         display: flex;
         flex-direction: row;
         justify-content: center;
         gap: 4px; /* space between boxes */
         justify-content: flex-start;
+        margin-top: 12px;
+        margin-left: 12px;
+        /* right: 170px; */
     }
     
     .winBox {
@@ -255,9 +286,8 @@
         z-index: 5;
         border-radius: 7px 7px 23px 23px;
         width: 1000px;
-        height: 120px;
+        height: 164px;
         left: 420px;
-        background-color: #000;
         color: rgb(255, 255, 255);
         display: flex;
         justify-content: center;
@@ -265,29 +295,13 @@
         margin: auto;
         font-weight: bold;
         color: #000;
-        box-shadow: 0px 5px 8px 0px rgba(0,0,0,0.9);
-        text-shadow: 0 0 5px #FFF, 0 0 10px #FFF, 0 0 15px #FFF, 0 0 20px #000000, 0 0 30px #000000, 0 0 40px #000000, 0 0 55px #000000, 0 0 75px #000000;
-
-        /* height: 100vh; */
-        --u: 6px; /*size of entire image*/
-        /*C1 is the flat top, c2 is left face, c3 is right face */
-        --c1: #000000;/*D8BFD8*/
-        --c2: #000288; /*4B0082*/
-        --c3: #ff7300; /*Medium Purple*/
-        /* --gp: 50%/ calc(var(--u) * 16.9) calc(var(--u) * 12.8); */
-        --gp: 50%/ calc(var(--u) * 5.63) calc(var(--u) * 4.26);
-        background: 
-            conic-gradient(from 122deg at 50% 85.15%, var(--c2) 0 58deg, var(--c3) 0 116deg, #fff0 0 100%) var(--gp),
-            conic-gradient(from 122deg at 50% 72.5%, var(--c1) 0 116deg, #fff0 0 100%) var(--gp), 
-            conic-gradient(from 58deg at 82.85% 50%, var(--c3) 0 64deg, #fff0 0 100%) var(--gp), 
-            conic-gradient(from 58deg at 66.87% 50%, var(--c1) 0 64deg, var(--c2) 0 130deg, #fff0 0 100%) var(--gp),
-            conic-gradient(from 238deg at 17.15% 50%, var(--c2) 0 64deg, #fff0 0 100%) var(--gp), 
-            conic-gradient(from 172deg at 33.13% 50%, var(--c3) 0 66deg, var(--c1) 0 130deg, #fff0 0 100%) var(--gp),
-            linear-gradient(98deg, var(--c3) 0 15%, #fff0 calc(15% + 1px) 100%) var(--gp),
-            linear-gradient(-98deg, var(--c2)0 15%, #fff0 calc(15% + 1px) 100%) var(--gp),
-            conic-gradient(from -58deg at 50.25% 14.85%, var(--c3) 0 58deg, var(--c2) 0 116deg, #fff0 0 100%) var(--gp),
-            conic-gradient(from -58deg at 50% 28.125%, var(--c1) 0 116deg, #fff0 0 100%) var(--gp),
-            linear-gradient(90deg, var(--c2) 0 50%, var(--c3) 0 100%) var(--gp);
+        /* box-shadow: 0px 5px 8px 0px rgba(0,0,0,0.9); */
+        text-shadow: 0 0 5px #FFF, 0 0 10px #FFF, 0 0 15px #FFF, 0 0 20px #000000, 
+        0 0 30px #000000, 0 0 40px #000000, 0 0 55px #000000, 0 0 75px #000000;
+        background: url('../assets/RLSS_Scorebug.png') no-repeat center center;
+        background-size: 100% 306%;
     }
+
+    
 
 </style>

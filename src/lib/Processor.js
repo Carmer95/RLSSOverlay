@@ -76,17 +76,6 @@ export const isReplay = derived(updateState, ($update, set) => {
 // Post-game UI visibility
 export const postGameVisible = writable(false);
 
-// --- Default shape for snapshot ---
-export const postGameSnapshot = writable({
-  blueTeam: {},
-  orangeTeam: {},
-  players: {},
-  winner: null,
-  mvp: null,
-  blueLogo: '',
-  orangeLogo: '',
-});
-
 
 // --- WebSocket-only update sender ---
 function sendPanelUpdate(message) {
@@ -182,22 +171,6 @@ socketMessageStore.subscribe(($msg) => {
     console.log('Podium');
     const panel = get(panelDataStore);
     console.log(panel)
-    const state = get(updateState);
-
-    // Capture postgame snapshot
-    const snapshot = {
-      blueTeam: state?.game?.teams?.[0] ?? {},
-      orangeTeam: state?.game?.teams?.[1] ?? {},
-      players: state?.players ?? {},
-      winner: state?.game?.hasWinner ? state.game.winner_team_num : null,
-      mvp: get(mvpPlayer),
-      blueLogo: panel.blueLogo || '',
-      orangeLogo: panel.orangeLogo || '',
-    };
-
-    postGameSnapshot.set(snapshot);
-    console.log(get(postGameSnapshot));
-
 
     if (panel.seriesOver) {
       console.log('[Processor] Series complete — resetting in 70 seconds');

@@ -47,21 +47,21 @@
     }
 
     .one-third {
-        height: 4px;
+        height: 2px;
         width: 22px;
         background-color: #000000;
         position: absolute;
-        left: 38px;
-        top: 164px;
+        left: 39px;
+        top: 166px;
     }
 
     .two-thirds {
         height: 22px;
-        width: 3px;
+        width: 2px;
         background-color: #000000;
         position: absolute;
         top: 50px;
-        left: 148px;
+        left: 151px;
     }
 
     .one-third-one-third {
@@ -69,9 +69,9 @@
         width: 13px;
         background-color: #b8d3ef;
         position: absolute;
-        left: 51px;
-        top: 100px;
-        rotate: 120deg;
+        left: 52px;
+        top: 96px;
+         transform: rotate(120deg);
     }
 
     .two-third-one-third {
@@ -79,9 +79,9 @@
         width: 13px;
         background-color: #b8d3ef;
         position: absolute;
-        left: 14px;
-        top: 58px;
-        rotate: 150deg;
+        left: 13px;
+        top: 55px;
+         transform: rotate(150deg);
     }
 
     .one-third-second-third {
@@ -89,9 +89,9 @@
         width: 13px;
         background-color: #b8d3ef;
         position: absolute;
-        right: 90px;
+        right: 86px;
         top: 60px;
-        rotate: 210deg;
+         transform: rotate(210deg);
     }
 
     .two-third-second-third {
@@ -99,9 +99,9 @@
         width: 13px;
         background-color: #b8d3ef;
         position: absolute;
-        right: 50px;
+        right: 47px;
         top: 20px;
-        rotate: 240deg;
+         transform: rotate(240deg);
     }
 
     .one-third-third-third {
@@ -109,9 +109,9 @@
         width: 13px;
         background-color: #b8d3ef;
         position: absolute;
-        right: 100px;
-        top: 71px;
-        rotate: 300deg;
+        right: 108px;
+        top: 68px;
+         transform: rotate(300deg);
     }
 
     .two-third-third-third {
@@ -119,9 +119,9 @@
         width: 13px;
         background-color: #b8d3ef;
         position: absolute;
-        right: 57px;
-        top: 120px;
-        rotate: 330deg;
+        right: 66px;
+        top: 104px;
+         transform: rotate(330deg);
     }
 
     /* .circle {
@@ -245,6 +245,7 @@
         display: flex;
         justify-content: center;
         top: 13px;
+        right: 6px;
     }
 
     .boost-value {

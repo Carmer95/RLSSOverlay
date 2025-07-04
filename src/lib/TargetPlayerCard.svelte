@@ -33,14 +33,14 @@
 
 <style>
     .stats {
-        width: 910px;
-        height: 240px;
+        width: 710px;
+        height: 190px;
         /* border-bottom-left-radius: 20%;
         border-bottom-right-radius: 20%; */
         /* background-color: #000; */
-        background-image: url('../assets/Status_Box_-_Rough_V.3.mdp.png');
-        background-position: 40% 40%;
-        background-size: 910px 240px;
+        background-image: url('../assets/RLSS_Stat_Box.png');
+        background-position: 52% 43%;
+        background-size: 970px 500px;
         bottom: -30px;
         left: -24px;
         position: absolute;
@@ -53,15 +53,15 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        top: 86px;
-        left: 180px;
+        top: 29px;
+        left: 280px;
         width: 150px;
         height: 60px;
         /* background-color: rgba(128, 128, 128, 0.404); */
         /* border-radius: 5px; */
         border-bottom-left-radius: 20%;
         border-bottom-right-radius: 20%;
-        font-size: 28px;
+        font-size: 20px;
         font-weight: bold;
         /* color: #000; */
         text-shadow: 0 0 5px #000, 0 0 10px #000, 0 0 15px #000, 0 0 20px #fff, 0 0 5px #fff, 0 0 10px #fff, 0 0 10px #fff, 0 0 10px #fff;
@@ -69,7 +69,7 @@
 
     .mvp-badge {
         position: absolute;
-        left: 140px;
+        left: 214px;
         margin-left: 10px;
         color: rgb(255, 255, 255);
         padding: 4px 8px;
@@ -84,20 +84,22 @@
         position: absolute;
         display: flex;
         flex-direction: row;
-        width: 700px;
-        top: 164px;
-        font-size: 20px;
+        width: 100%;
+        top: 102px;
+        left: 56px;
+        font-size: 16px;
         font-weight: bold;
         /* color: #000; */
         text-shadow: 0 0 5px #000, 0 0 10px #000, 0 0 15px #000, 0 0 20px #fff, 0 0 5px #fff, 0 0 10px #fff, 0 0 10px #fff, 0 0 10px #fff;
     }
     
     .value {
-        position: relative;
+        position: absolute;
         display: flex;
         flex-direction: row;
-        right: 15px;
-        top: 200px;
+        width: 32px;
+        right: 88px;
+        top: 122px;
         margin-right: 15px;
         /* margin-top: 15px; */
         font-size: 20px;
@@ -112,11 +114,13 @@
         margin-top: 5px;
         margin-left: 50px;
         text-align: left;
+        width: 58px;
+        text-align: center;
         
     }
 
     .score-val{
-        right: 360px;
+        right: 457px;
         margin: auto;
         top: 4px;
     }
@@ -124,28 +128,28 @@
     .goals-val{
         position: absolute;
         margin: auto;
-        left: 187px;
+        right: 335px;
         top: 4px;
     }
 
     .shots-val{
         position: absolute;
         margin: auto;
-        left: 288px;
+        right: 228px;
         top: 4px;
     }
 
     .assists-val{
         position: absolute;
         margin: auto;
-        left: 396px;
+        right: 119px;
         top: 4px;
     }
 
     .saves-val{
         position: absolute;
         margin: auto;
-        left: 504px;
+        right: 11px;
         top: 4px;
     }
 </style>
