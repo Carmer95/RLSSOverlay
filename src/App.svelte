@@ -6,9 +6,6 @@
   import Team1Boost from "./lib/Team1Boost.svelte";
   import Scorebug from "./lib/Scorebug.svelte"; 
   import PostGame from "./lib/PostGame.svelte";
-  // import ControlPanel from './ControlPanel.svelte';
-  
-  // let players = [];
 
   function processName(name) {
   if (name.length > 9) {
@@ -28,122 +25,61 @@ function truncateName(name, limit = 15) {
 </script>
 
 <main>
-  <!-- <ControlPanel bind:players={players} /> -->
 
   {#if $postGameVisible}
-  <div class="overlay-container">
-    <Scorebug />
-    <PostGame />
-</div>
+    <div class="overlay-container">
+      <Scorebug />
+      <PostGame />
+    </div>
   {:else}
     <div class="scorebug">
       <Scorebug />
     </div>
 
   <h1>RLSS</h1>
-
-
-
-  <!-- {#if $teamsStore}
-    <ul class="blueTeam">
-        {#each Object.keys($teamsStore.blueTeam) as playerId}
-            <li class="player-info-b">
-              <div class="blue-name-cont"><p class="blue-name">{$teamsStore.blueTeam[playerId].name}</p></div>
-              <div class="blue-boost-cont"><p class="blue-boost">{$teamsStore.blueTeam[playerId].boost}</p></div>
-              <Team0Boost percent="{$teamsStore.blueTeam[playerId].boost}" />
-            </li>
-        {/each}
-    </ul>
-  {/if} -->
   
   {#if $teamsStore}
-  <ul class="blueTeam">
-    {#each Object.keys($teamsStore.blueTeam) as playerId}
-      <li class="player-info-b">
-        <div class="blue-name-cont">
-          <p class={processName($teamsStore.blueTeam[playerId].name)}>
-            {truncateName($teamsStore.blueTeam[playerId].name)}
-          </p>
-        </div>
-        <div class="blue-boost-cont">
-          <p class="blue-boost">{$teamsStore.blueTeam[playerId].boost}</p>
-        </div>
-        <Team0Boost color="#{$blueTeam.color_primary}" percent={$teamsStore.blueTeam[playerId].boost } />
-      </li>
-    {/each}
-  </ul>
-{/if}
-  
-  <!-- {#if $teamsStore}
     <ul class="blueTeam">
-        {#each Object.keys($teamsStore.blueTeam) as playerId}
-            <li class="player-info-b">
-              <div class="blue-name-cont">
-                {#if $teamsStore.blueTeam[playerId].name.length > 10}
-                  <p class="blue-name">{$teamsStore.blueTeam[playerId].name}</p>
-                {:else if $teamsStore.blueTeam[playerId].name.length > 6}
-                  <p class="blue-name-m">{truncateName($teamsStore.blueTeam[playerId].name)}</p>
-                {:else}
-                    <p class="blue-name-l">{$teamsStore.blueTeam[playerId].name}</p>
-                {/if}
-              </div>
-              <div class="blue-boost-cont"><p class="blue-boost">
-                
-                {$teamsStore.blueTeam[playerId].boost}
-              
-              </p></div>
-              <Team0Boost percent="{$teamsStore.blueTeam[playerId].boost}" />
-            </li>
-        {/each}
+      {#each Object.keys($teamsStore.blueTeam) as playerId}
+        <li class="player-info-b">
+          <div class="blue-name-cont">
+            <p class={processName($teamsStore.blueTeam[playerId].name)}>
+              {truncateName($teamsStore.blueTeam[playerId].name)}
+            </p>
+          </div>
+          <div class="blue-boost-cont">
+            <p class="blue-boost">{$teamsStore.blueTeam[playerId].boost}</p>
+          </div>
+          <Team0Boost color="#{$blueTeam.color_primary}" percent={$teamsStore.blueTeam[playerId].boost } />
+        </li>
+      {/each}
     </ul>
-  {/if} -->
-
+  {/if}
+    
   {#if $teamsStore}
-  <ul class="orangeTeam">
-    {#each Object.keys($teamsStore.orangeTeam) as playerId}
-      <li class="player-info-o">
-        <div class="orange-name-cont">
-          <p class={processName($teamsStore.orangeTeam[playerId].name)}>
-            {truncateName($teamsStore.orangeTeam[playerId].name)}
-          </p>
-        </div>
-        <div class="orange-boost-cont">
-          <p class="orange-boost">{$teamsStore.orangeTeam[playerId].boost}</p>
-        </div>
-        <Team1Boost color="#{$orangeTeam.color_primary}" percent="{$teamsStore.orangeTeam[playerId].boost}" />
-      </li>
-    {/each}
-  </ul>
-{/if}
-  
-  <!-- {#if $teamsStore}
     <ul class="orangeTeam">
-        {#each Object.keys($teamsStore.orangeTeam) as playerId}
-            <li class="player-info-o">
-              <div class="orange-name-cont">
-                {#if $teamsStore.orangeTeam[playerId].name.length > 9}
-                  <p class="orange-name">{$teamsStore.orangeTeam[playerId].name}</p>
-                {:else if $teamsStore.orangeTeam[playerId].name.length > 6}
-                  <p class="orange-name-m">{$teamsStore.orangeTeam[playerId].name}</p>
-                {:else}
-                    <p class="orange-name-l">{$teamsStore.orangeTeam[playerId].name}</p>
-                {/if}
-              </div>
-              <div class="orange-boost-cont"><p class="orange-boost">
-                
-                {$teamsStore.orangeTeam[playerId].boost}
-              
-              </p></div>
-              <Team1Boost percent="{$teamsStore.orangeTeam[playerId].boost}" />
-            </li>
-        {/each}
+      {#each Object.keys($teamsStore.orangeTeam) as playerId}
+        <li class="player-info-o">
+          <div class="orange-name-cont">
+            <p class={processName($teamsStore.orangeTeam[playerId].name)}>
+              {truncateName($teamsStore.orangeTeam[playerId].name)}
+            </p>
+          </div>
+          <div class="orange-boost-cont">
+            <p class="orange-boost">{$teamsStore.orangeTeam[playerId].boost}</p>
+          </div>
+          <Team1Boost color="#{$orangeTeam.color_primary}" percent="{$teamsStore.orangeTeam[playerId].boost}" />
+        </li>
+      {/each}
     </ul>
-  {/if} -->
+  {/if}
 
   {#if $targetPlayer?.name}
     <div class="currentlySpectating">
       <div class="statCard">
-        <TargetPlayerCard />
+        <TargetPlayerCard
+          teamColor={$targetPlayer.team === 0 ? $blueTeam.color_primary : $orangeTeam.color_primary}
+        />
       </div>
       <div class="boost">
         {#if $targetPlayer.team === 0}
@@ -154,30 +90,30 @@ function truncateName(name, limit = 15) {
       </div>
     </div>
   {/if}
-{/if}
+  {/if}
   {#if $isOT}
-  <p class="overtime">OVERTIME</p>
-{/if}
-
-{#if $isReplay}
-  <p class="replay">REPLAY</p>
-  {#if $targetPlayer?.name}
-    <div class="currentlySpectating">
-      <div class="statCard">
-        <TargetPlayerCard />
-      </div>
-      <div class="boost">
-        {#if $targetPlayer.team === 0}
-          <Boost percent="{$targetPlayer.boost}" color="#{$blueTeam.color_primary}" />
-        {:else}
-          <Boost percent="{$targetPlayer.boost}" color="#{$orangeTeam.color_primary}" />
-        {/if}
-      </div>
-    </div>
+    <p class="overtime">OVERTIME</p>
   {/if}
-{/if}
 
-
+  {#if $isReplay}
+    <p class="replay">REPLAY</p>
+    {#if $targetPlayer?.name}
+      <div class="currentlySpectating">
+        <div class="statCard">
+          <TargetPlayerCard
+            teamColor={$targetPlayer.team === 0 ? $blueTeam.color_primary : $orangeTeam.color_primary}
+          />
+        </div>
+        <div class="boost">
+          {#if $targetPlayer.team === 0}
+            <Boost percent="{$targetPlayer.boost}" color="#{$blueTeam.color_primary}" />
+          {:else}
+            <Boost percent="{$targetPlayer.boost}" color="#{$orangeTeam.color_primary}" />
+          {/if}
+        </div>
+      </div>
+    {/if}
+  {/if}
 
 </main>
 
@@ -301,89 +237,6 @@ li {
   text-overflow: ellipsis; 
 }
 
-/* .blue-name {
-  margin: 0px;
-  position: relative;
-  font-size: 14px;
-  text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 3px #000000;
-  top: 46px;
-  font-family: "Nosifer", serif;
-  color: #ffffff;
-  white-space: nowrap; 
-  overflow: hidden; 
-  text-overflow: ellipsis; 
-}
-
-.blue-name-m {
-  margin: 0px;
-  position: relative;
-  font-size: 19px;
-  text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 3px #000000;
-  top: 42px;
-  font-family: "Nosifer", serif;
-  color: #ffffff;
-  white-space: nowrap; 
-  overflow: hidden; 
-  text-overflow: ellipsis; 
-}
-
-.blue-name-l {
-  margin: 0px;
-  position: relative;
-  font-size: 26px;
-  text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 3px #000000;
-  top: 36px;
-  font-family: "Nosifer", serif;
-  color: #ffffff;
-  white-space: nowrap; 
-  overflow: hidden; 
-  text-overflow: ellipsis; 
-}
-
-
-.orange-name {
-  margin: 0px;
-  position: relative;
-  font-size: 14px;
-  text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 3px #000000;
-  text-align: right;
-  top: 46px;
-  font-family: "Nosifer", serif;
-  color: #ffffff;
-  white-space: nowrap; 
-  overflow: hidden; 
-  text-overflow: ellipsis; 
-}
-
-.orange-name-m {
-  margin: 0px;
-  position: relative;
-  font-size: 19px;
-  text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 3px #000000;
-  text-align: right;
-  top: 42px;
-  font-family: "Nosifer", serif;
-  color: #ffffff;
-  white-space: nowrap; 
-  overflow: hidden; 
-  text-overflow: ellipsis; 
-}
-
-.orange-name-l {
-  margin: 0px;
-  position: relative;
-  font-size: 26px;
-  text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 3px #000000;
-  text-align: right;
-  top: 36px;
-  font-family: "Nosifer", serif;
-  color: #ffffff;
-  white-space: nowrap; 
-  overflow: hidden; 
-  text-overflow: ellipsis; 
-} */
-
-
 .blue-boost-cont {
   margin: 0px;
   position: absolute;
@@ -486,54 +339,4 @@ li {
   border-radius: 0px 0px 30px 0px;
 }
 
-
-
 </style>
-
-
-
-  <!-- 
-  The {#if $targetPlayer?.name} does three things:
-
-  It always has the latest value contained by the targetPlayer Svelte store because we have added a $ to the front. This only works in .svelte files.
-  It checks $targetPlayer is not undefined (that’s what the ? before the . is doing)
-  It checks that whatever $targetPlayer is, it has a name property that is “truthy” (so not undefined or "") 
-  -->
-
-  <!--
-  {#if $allPlayers?.team}
-  let team0 = [];
-  $allPlayers.map((players) => {
-    if players
-  })
-  {/if} 
-  -->  
-
-  <!-- <div class="playerelement">
-    <ul class="blue">
-      {#each allPlayers as player}
-        {#if player.team == 0}
-          <li>{player.name}</li>
-          <li>{player.boost}</li>
-          <hr>
-        {/if}
-      {/each}
-        <li class="players">
-            <p class="name"></p>
-            <p class="boost"></p>
-        </li>
-    </ul>
-    <ul class="orange">
-      {#each allPlayers as player}
-        {#if player.team == 1}
-          <li>{player.name}</li>
-          <li>{player.boost}</li>
-          <hr>
-        {/if}
-      {/each}
-        <li class="players">
-            <p class="name"></p>
-            <p class="boost"></p>
-        </li>
-    </ul>
-  </div> -->

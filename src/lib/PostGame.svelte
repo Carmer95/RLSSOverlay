@@ -152,7 +152,7 @@
   .mvp-badge {
     position: absolute;
     top: 70px;
-    right: 110px;
+    right: 104px;
     background: gold;
     color: black;
     font-weight: bold;

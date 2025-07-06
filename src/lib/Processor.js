@@ -98,6 +98,17 @@ socketMessageStore.subscribe(($msg) => {
   if (!$msg?.event) return;
   const now = Date.now();
 
+  if ($msg.event === 'game:match_created') {
+    const panel = get(panelDataStore);
+
+    // If the previous series was over, reset it now
+    if (panel.seriesOver === true) {
+      console.log('[Processor] New match created after series ended — resetting series immediately');
+      sendPanelUpdate({ resetGame: true });
+      return; // Exit early to prevent other logic from running
+    }
+  }
+
   if ($msg.event === 'game:initialized') {
     const panel = get(panelDataStore);
     const initId = JSON.stringify($msg.data);
@@ -107,7 +118,7 @@ socketMessageStore.subscribe(($msg) => {
     lastHandledGameId = initId;
     lastGameInit = now;
 
-    if (!panel.startSeries || panel.seriesOver) {
+    if (!panel.startSeries || panel.seriesOver === true) {
       console.log('[Processor] Series not started or already over.');
       return;
     }
@@ -128,13 +139,29 @@ socketMessageStore.subscribe(($msg) => {
     }
   }
 
-  if ($msg.event === 'game:match_ended') {
-    const panel = get(panelDataStore);
-    const winner = $msg.data?.winner_team_num;
+  let lastHandledMatchEndId = null;
+  let lastMatchEndTime = 0;
 
+  if ($msg.event === 'game:match_ended') {
+    const now = Date.now();
+    const panel = get(panelDataStore);
+
+    // Create a match-end ID based on event data
+    const matchEndId = JSON.stringify($msg.data);
+
+    // Debounce to avoid double handling
+    if (matchEndId === lastHandledMatchEndId || now - lastMatchEndTime < 3000) {
+      console.log('[Processor] Duplicate match_ended ignored.');
+      return;
+    }
+
+    lastHandledMatchEndId = matchEndId;
+    lastMatchEndTime = now;
+
+    const winner = $msg.data?.winner_team_num;
     let updated = false;
 
-    if (!panel.startSeries || panel.seriesOver) {
+    if (!panel.startSeries || panel.seriesOver === true) {
       console.log('[Processor] Series not started or already over.');
       return;
     }
@@ -150,7 +177,6 @@ socketMessageStore.subscribe(($msg) => {
     }
 
     if (updated) {
-
       const requiredWins = Math.ceil(panel.bestOf / 2);
       const blueWins = winner === 0 ? panel.blueWins + 1 : panel.blueWins;
       const orangeWins = winner === 1 ? panel.orangeWins + 1 : panel.orangeWins;

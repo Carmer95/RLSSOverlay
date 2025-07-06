@@ -14,6 +14,8 @@
 
     $: console.log('panelDataStore: ', $panelDataStore, 'Panel store currentGame: ', $panelDataStore.currentGame );
     $: currentGame = $panelDataStore.currentGame;
+    $: blueNameClass = ($blueTeam?.name?.length ?? 0) > 12 ? 'team-name small' : 'team-name';
+    $: orangeNameClass = ($orangeTeam?.name?.length ?? 0) > 12 ? 'team-name small' : 'team-name';
 
 </script>
 
@@ -28,7 +30,7 @@
             {/if}
         </div>
         <div class="blue-info">
-            <div class="blue-name">
+            <div class="{blueNameClass}">
                 {($blueTeam?.name) ?? 'Blue Team'}
             </div>
         </div>
@@ -56,7 +58,7 @@
 
         <!-- Orange Side -->
         <div class="orange-info">
-            <div class="orange-name">
+            <div class="{orangeNameClass}">
                 {($orangeTeam?.name) ?? 'Orange Team'}
             </div>
         </div>
@@ -116,6 +118,26 @@
         height: 100px;
         background-position: 50% 50%;
         background-size: 100%;
+    }
+
+    .team-name {
+        width: 230px;
+        height: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        font-size: 28px;
+        line-height: 1.1;
+        padding: 0 4px;
+        overflow: visible;
+        word-break: break-word;
+        white-space: normal;
+        flex-direction: column;
+    }
+
+    .team-name.small {
+        font-size: 24px;
     }
 
     .blue-info {
@@ -213,7 +235,7 @@
         z-index: 5;
         margin: auto;
         top: 122px;
-        left: 614px;
+        left: 615px;
         width: 690px;
         height: 20px;
         background-color: #000;
@@ -256,7 +278,7 @@
         gap: 4px; /* space between boxes */
         justify-content: flex-start;
         margin-top: 12px;
-        margin-left: 12px;
+        margin-left: 14px;
         /* right: 170px; */
     }
     
@@ -297,7 +319,7 @@
         color: #000;
         /* box-shadow: 0px 5px 8px 0px rgba(0,0,0,0.9); */
         text-shadow: 0 0 5px #FFF, 0 0 10px #FFF, 0 0 15px #FFF, 0 0 20px #000000, 
-        0 0 30px #000000, 0 0 40px #000000, 0 0 55px #000000, 0 0 75px #000000;
+        0 0 30px #000000;
         background: url('../assets/RLSS_Scorebug.png') no-repeat center center;
         background-size: 100% 306%;
     }
