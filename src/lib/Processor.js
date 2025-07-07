@@ -23,14 +23,27 @@ export const orangeTeam = derived(updateState, ($update, set) => {
   set($update?.game?.teams?.[1] ?? {});
 });
 
-// Target player
-export const targetPlayer = derived(updateState, ($update, set) => {
+// Existing derived store for live updates
+const rawTargetPlayer = derived(updateState, ($update, set) => {
   if ($update?.game?.hasTarget) {
     set($update.players[$update.game.target]);
   } else {
-    set({});
+    set(null);
   }
 });
+
+// New persistent store
+export const targetPlayer = writable({});
+
+// Update the targetPlayer only if valid data is available
+rawTargetPlayer.subscribe((player) => {
+  if (player?.name && typeof player.name === 'string') {
+    targetPlayer.set(player);
+  }
+});
+
+// Store for stacking events
+export const statfeedEvents = writable([]);
 
 // Grouped players by team
 export const teamsStore = derived(updateState, ($update, set) => {
@@ -48,29 +61,66 @@ export const teamsStore = derived(updateState, ($update, set) => {
 });
 
 // --- MVP Player ---
-export const mvpPlayer = derived(updateState, ($update, set) => {
-  if (!$update?.players) return set(null);
+const rawMvpPlayer = derived(updateState, ($update, set) => {
+  if ($update?.game?.hasTarget) {
+    const players = $update.players;
+    let best = null;
 
-  let topPlayer = null;
-  let topScore = -1;
-
-  for (const id in $update.players) {
-    const player = $update.players[id];
-    if (player.score > topScore) {
-      topScore = player.score;
-      topPlayer = { ...player, id };
+    for (const id in players) {
+      const player = players[id];
+      if (!best || player.score > best.score) {
+        best = player;
+      }
     }
-  }
 
-  set(topPlayer);
+    set(best || null);
+  } else {
+    set(null);
+  }
 });
 
-// Overtime + replay state
+// New persistent MVP store
+export const mvpPlayer = writable({});
+
+// Only update if the MVP data is valid
+rawMvpPlayer.subscribe((player) => {
+  if (player?.name && typeof player.name === 'string') {
+    mvpPlayer.set(player);
+  }
+});
+
+// Overtime + replay state + roundStart + overlayVisible
 export const isOT = derived(updateState, ($update, set) => {
   set(Boolean($update?.game?.isOT));
 });
-export const isReplay = derived(updateState, ($update, set) => {
-  set(Boolean($update?.game?.isReplay));
+
+export const isReplay = writable(false);
+
+export const roundStarted = writable(false);
+
+export const seriesStarted = derived(panelDataStore, ($panelData) => {
+  return (
+    $panelData?.startSeries === true ||
+    $panelData?.currentGame > 1 ||
+    $panelData?.blueWins > 0 ||
+    $panelData?.orangeWins > 0
+  );
+});
+
+export const overlayVisible = writable(false);
+
+// Keep overlayVisible in sync with panelDataStore updates
+panelDataStore.subscribe(($panel) => {
+  if (typeof $panel.overlayVisible === 'boolean') {
+    overlayVisible.set($panel.overlayVisible);
+  }
+});
+
+// Follow updateState, but let us override manually too
+updateState.subscribe(($update) => {
+  if ($update?.game?.isReplay !== undefined) {
+    isReplay.set($update.game.isReplay);
+  }
 });
 
 // Post-game UI visibility
@@ -112,16 +162,22 @@ socketMessageStore.subscribe(($msg) => {
   if ($msg.event === 'game:initialized') {
     const panel = get(panelDataStore);
     const initId = JSON.stringify($msg.data);
+
+    overlayVisible.set(true);
+
     console.log('New game started. ', panel, ' ', initId, ' ', lastHandledGameId, ' ', lastGameInit );
+
     if (initId === lastHandledGameId || now - lastGameInit < 3000) return;
 
     lastHandledGameId = initId;
     lastGameInit = now;
 
-    if (!panel.startSeries || panel.seriesOver === true) {
-      console.log('[Processor] Series not started or already over.');
-      return;
-    }
+    const isSeriesMode = panel.bestOf > 1;
+
+   if ((isSeriesMode && !get(seriesStarted)) || panel.seriesOver === true) {
+  console.log('[Processor] Series not started or already over.');
+  return;
+}
 
     // Only increment if we're not already at bestOf
     const newGame = panel.currentGame + 1;
@@ -138,6 +194,40 @@ socketMessageStore.subscribe(($msg) => {
        console.log(`[Processor] Incremented currentGame to ${newGame}`);
     }
   }
+
+  if ($msg.event === 'game:round_started_go') {
+    console.log('[Processor] Round started — enabling overlay display');
+    roundStarted.set(true);
+  }
+
+  if ($msg.event === 'game:match_destroyed' || $msg.event === 'game:initialized') {
+    roundStarted.set(false);
+  }
+
+  if ($msg.event === 'game:statfeed_event') {
+  const { event_name, main_target } = $msg.data;
+  if (event_name && main_target?.name) {
+    const newEvent = {
+      id: Date.now(), // unique ID
+      name: main_target.name,
+      event: event_name,
+      team: main_target.team_num,
+    };
+
+    // Push to array and limit to 3
+    statfeedEvents.update((events) => {
+      const updated = [...events, newEvent];
+      return updated.slice(-3); // Keep only last 3
+    });
+
+    // Remove after 3 seconds
+    setTimeout(() => {
+      statfeedEvents.update((events) =>
+        events.filter((e) => e.id !== newEvent.id)
+      );
+    }, 300000);
+  }
+}
 
   let lastHandledMatchEndId = null;
   let lastMatchEndTime = 0;
@@ -161,7 +251,9 @@ socketMessageStore.subscribe(($msg) => {
     const winner = $msg.data?.winner_team_num;
     let updated = false;
 
-    if (!panel.startSeries || panel.seriesOver === true) {
+    const isSeriesMode = panel.bestOf > 1;
+
+    if ((isSeriesMode && !get(seriesStarted)) || panel.seriesOver === true) {
       console.log('[Processor] Series not started or already over.');
       return;
     }
@@ -190,11 +282,15 @@ socketMessageStore.subscribe(($msg) => {
   
   if ($msg.event === 'game:match_destroyed') {
     postGameVisible.set(false);
-    console.log('[Processor] match_destroyed — postGameVisible set to false');
+    overlayVisible.set(false);
+    isReplay.set(false);
+    targetPlayer.set({});
+    console.log('[Processor] match_destroyed — Overlay set to false');
   }
 
   if ($msg.event === 'game:podium_start') {
     console.log('Podium');
+    overlayVisible.set(false);
     const panel = get(panelDataStore);
     console.log(panel)
 
@@ -209,6 +305,7 @@ socketMessageStore.subscribe(($msg) => {
 
     setTimeout(() => {
       postGameVisible.set(true);
+      overlayVisible.set(true);
     }, 5000);
 
   }

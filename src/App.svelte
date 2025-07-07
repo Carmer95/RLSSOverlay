@@ -1,6 +1,8 @@
 <script>
+  import { onMount } from 'svelte';
   import Boost from "./lib/Boost.svelte";
-  import {  orangeTeam, blueTeam, teamsStore, targetPlayer, isOT, isReplay, postGameVisible } from "./lib/Processor";
+  import { fade } from 'svelte/transition';
+  import {  orangeTeam, blueTeam, teamsStore, targetPlayer, isOT, isReplay, postGameVisible, overlayVisible, roundStarted, statfeedEvents } from "./lib/Processor";
   import TargetPlayerCard from "./lib/TargetPlayerCard.svelte";
   import Team0Boost from "./lib/Team0Boost.svelte";
   import Team1Boost from "./lib/Team1Boost.svelte";
@@ -21,98 +23,157 @@ function truncateName(name, limit = 15) {
   return name.length > limit ? name.slice(0, limit) + '...' : name;
 }
 
-  console.log(teamsStore);
+console.log(teamsStore);
+
+// Create a map from event names to imported images
+  let images = {};
+
+  onMount(async () => {
+    images['goal'] = (await import('./assets/goal.png')).default;
+    images['save'] = (await import('./assets/save.png')).default;
+    images['assist'] = (await import('./assets/assist.png')).default;
+    images['epic_save'] = (await import('./assets/epic_save.png')).default;
+    images['shot'] = (await import('./assets/shot.png')).default;
+    images['demolition'] = (await import('./assets/demolition.png')).default;
+    images['default'] = (await import('./assets/default.png')).default;
+  });
+
+  function getImage(eventName) {
+    return images[eventName.toLowerCase().replace(/\s+/g, '_')] || images['default'];
+  }
+
+  function hexToRgba(hex, alpha = 0.7) {
+    const r = parseInt(hex.slice(0, 2), 16);
+    const g = parseInt(hex.slice(2, 4), 16);
+    const b = parseInt(hex.slice(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  }
+
 </script>
 
+
+<div class="statfeed-stack">
+  {#each $statfeedEvents as event (event.id)}
+    <div
+      transition:fade
+      class="statfeed-container"
+      style="background-color: {event.team === 0 
+      ? hexToRgba($blueTeam.color_primary) 
+      : hexToRgba($orangeTeam.color_primary)}">
+      <img
+        class="statfeed-icon"
+        src={getImage(event.event)}
+        alt={event.event} />
+      <p class="statfeed-text">
+        <strong>{event.name}</strong>
+      </p>
+    </div>
+  {/each}
+</div>
 <main>
 
-  {#if $postGameVisible}
-    <div class="overlay-container">
-      <Scorebug />
-      <PostGame />
-    </div>
-  {:else}
-    <div class="scorebug">
-      <Scorebug />
-    </div>
+  {#if $overlayVisible}
 
-  <h1>RLSS</h1>
-  
-  {#if $teamsStore}
-    <ul class="blueTeam">
-      {#each Object.keys($teamsStore.blueTeam) as playerId}
-        <li class="player-info-b">
-          <div class="blue-name-cont">
-            <p class={processName($teamsStore.blueTeam[playerId].name)}>
-              {truncateName($teamsStore.blueTeam[playerId].name)}
-            </p>
-          </div>
-          <div class="blue-boost-cont">
-            <p class="blue-boost">{$teamsStore.blueTeam[playerId].boost}</p>
-          </div>
-          <Team0Boost color="#{$blueTeam.color_primary}" percent={$teamsStore.blueTeam[playerId].boost } />
-        </li>
-      {/each}
-    </ul>
-  {/if}
-    
-  {#if $teamsStore}
-    <ul class="orangeTeam">
-      {#each Object.keys($teamsStore.orangeTeam) as playerId}
-        <li class="player-info-o">
-          <div class="orange-name-cont">
-            <p class={processName($teamsStore.orangeTeam[playerId].name)}>
-              {truncateName($teamsStore.orangeTeam[playerId].name)}
-            </p>
-          </div>
-          <div class="orange-boost-cont">
-            <p class="orange-boost">{$teamsStore.orangeTeam[playerId].boost}</p>
-          </div>
-          <Team1Boost color="#{$orangeTeam.color_primary}" percent="{$teamsStore.orangeTeam[playerId].boost}" />
-        </li>
-      {/each}
-    </ul>
-  {/if}
-
-  {#if $targetPlayer?.name}
-    <div class="currentlySpectating">
-      <div class="statCard">
-        <TargetPlayerCard
-          teamColor={$targetPlayer.team === 0 ? $blueTeam.color_primary : $orangeTeam.color_primary}
-        />
+    {#if $postGameVisible}
+      <!--  PostGame shown only when postGameVisible is true -->
+      <div transition:fade class="overlay-container">
+        <Scorebug />
+        <PostGame />
       </div>
-      <div class="boost">
-        {#if $targetPlayer.team === 0}
-          <Boost percent="{$targetPlayer.boost}" color="#{$blueTeam.color_primary}" />
-        {:else}
-          <Boost percent="{$targetPlayer.boost}" color="#{$orangeTeam.color_primary}" />
+    {:else}
+      <!--  Everything else (during live match) -->
+      {#if !$postGameVisible && $roundStarted && $targetPlayer?.name && $targetPlayer.name !== 'undefined'}
+        <div transition:fade class="currentlySpectating">
+          <div class="statCard">
+            <TargetPlayerCard
+              teamColor={$targetPlayer.team === 0 ? $blueTeam.color_primary : $orangeTeam.color_primary}
+            />
+          </div>
+          <!--  Boost only shown when not postgame -->
+          <div class="boost">
+            {#if $targetPlayer.team === 0}
+              <Boost percent="{$targetPlayer.boost}" color="#{$blueTeam.color_primary}" />
+            {:else}
+              <Boost percent="{$targetPlayer.boost}" color="#{$orangeTeam.color_primary}" />
+            {/if}
+          </div>
+        </div>
+      {/if}
+
+      {#if $roundStarted}
+        <div transition:fade class="scorebug">
+          <Scorebug />
+        </div>
+
+        <h1>RLSS</h1>
+        
+        <!-- Blue team -->
+        {#if $teamsStore}
+          <ul transition:fade class="blueTeam">
+            {#each Object.keys($teamsStore.blueTeam) as playerId}
+              <li class="player-info-b">
+                <div class="blue-name-cont">
+                  <p class={processName($teamsStore.blueTeam[playerId].name)}>
+                    {truncateName($teamsStore.blueTeam[playerId].name)}
+                  </p>
+                </div>
+                <div class="blue-boost-cont">
+                  <p class="blue-boost">{$teamsStore.blueTeam[playerId].boost}</p>
+                </div>
+                <Team0Boost color="#{$blueTeam.color_primary}" percent={$teamsStore.blueTeam[playerId].boost} />
+              </li>
+            {/each}
+          </ul>
         {/if}
-      </div>
-    </div>
+          
+        <!-- Orange team -->
+        {#if $teamsStore}
+          <ul  transition:fade class="orangeTeam">
+            {#each Object.keys($teamsStore.orangeTeam) as playerId}
+              <li class="player-info-o">
+                <div class="orange-name-cont">
+                  <p class={processName($teamsStore.orangeTeam[playerId].name)}>
+                    {truncateName($teamsStore.orangeTeam[playerId].name)}
+                  </p>
+                </div>
+                <div class="orange-boost-cont">
+                  <p class="orange-boost">{$teamsStore.orangeTeam[playerId].boost}</p>
+                </div>
+                <Team1Boost color="#{$orangeTeam.color_primary}" percent="{$teamsStore.orangeTeam[playerId].boost}" />
+              </li>
+            {/each}
+          </ul>
+        {/if}
+      {/if}
+    {/if}
   {/if}
-  {/if}
+  
+  <!-- Overtime -->
   {#if $isOT}
-    <p class="overtime">OVERTIME</p>
+    <p  transition:fade class="overtime">OT</p>
   {/if}
 
-  {#if $isReplay}
-    <p class="replay">REPLAY</p>
-    {#if $targetPlayer?.name}
-      <div class="currentlySpectating">
-        <div class="statCard">
-          <TargetPlayerCard
-            teamColor={$targetPlayer.team === 0 ? $blueTeam.color_primary : $orangeTeam.color_primary}
-          />
+  <!-- Replay -->
+  {#if $isReplay && !$postGameVisible}
+    <div class="replayBorder">
+      <p  transition:fade class="replay">REPLAY</p>
+      {#if $targetPlayer?.name}
+        <div  transition:fade class="currentlySpectating">
+          <div class="statCard">
+            <TargetPlayerCard
+              teamColor={$targetPlayer.team === 0 ? $blueTeam.color_primary : $orangeTeam.color_primary}
+            />
+          </div>
+          <div class="boost">
+            {#if $targetPlayer.team === 0}
+              <Boost percent="{$targetPlayer.boost}" color="#{$blueTeam.color_primary}" />
+            {:else}
+              <Boost percent="{$targetPlayer.boost}" color="#{$orangeTeam.color_primary}" />
+            {/if}
+          </div>
         </div>
-        <div class="boost">
-          {#if $targetPlayer.team === 0}
-            <Boost percent="{$targetPlayer.boost}" color="#{$blueTeam.color_primary}" />
-          {:else}
-            <Boost percent="{$targetPlayer.boost}" color="#{$orangeTeam.color_primary}" />
-          {/if}
-        </div>
-      </div>
-    {/if}
+      {/if}
+    </div>
   {/if}
 
 </main>
@@ -137,7 +198,7 @@ main {
 h1 {
   position: absolute;
   top: -20px;
-  right: 200px;
+  right: 336px;
 }
   
 li {
@@ -156,12 +217,13 @@ li {
 }
 
 .overtime {
-  font-size: 32px;
-  color: #0077ff;
+  font-size: 16px;
+  color: #ff0000;
   position: absolute;
-  top: 110px;
-  right: 640px;
+  top: 136px;
+  right: 952px;
   z-index: 3;
+  text-shadow: 0 0 2px #000000, 0 0 2px #000000, 0 0 3px #000000;
 }
 
 .overlay-container {
@@ -278,7 +340,7 @@ li {
 .orangeTeam {
   position: absolute;
   margin: 0;
-  right: 0px;
+  left: 1620px;
   top: 160px;
   padding: 0;
 }
@@ -295,7 +357,7 @@ li {
   position: absolute;
   height: 240px;
   width: 240px;
-  right: 50px;
+  left: 1630px;
   bottom: 60px;
   display: flex;
   justify-content: center;
@@ -339,4 +401,109 @@ li {
   border-radius: 0px 0px 30px 0px;
 }
 
+.statfeed-stack {
+  position: absolute;
+  top: 14px;
+  right: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 999;
+  align-items: flex-end;
+}
+
+.statfeed-container {
+  /* position: absolute;
+  top: 20px;
+  right: 30px; */
+  padding: 0px 8px;
+  margin-bottom: 2px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  animation: slideIn 0.3s ease-out;
+  z-index: 999;
+  justify-content: start;
+  height: 40px;
+}
+
+.statfeed-icon {
+  width: 50px;
+  height: 40px;
+}
+
+.statfeed-text {
+  font-size: 20px;
+  color: white;
+  font-weight: bold;
+  text-shadow: 0 0 4px black;
+  margin: 0px 30px 0px 30px;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
 </style>
+
+
+
+<!-- New msg: 
+
+data
+: 
+event_name
+: 
+"Goal"
+main_target
+: 
+id
+: 
+"Tusk_2"
+name
+: 
+"Tusk"
+team_num
+: 
+0
+[[Prototype]]
+: 
+Object
+match_guid
+: 
+"BB985EF611F05AB9D2DC4585A58FAB1B"
+secondary_target
+: 
+id
+: 
+""
+name
+: 
+""
+team_num
+: 
+-1
+[[Prototype]]
+: 
+Object
+type
+: 
+"Goal"
+[[Prototype]]
+: 
+Object
+event
+: 
+"game:statfeed_event"
+[[Prototype]]
+: 
+Object -->

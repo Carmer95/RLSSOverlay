@@ -25,6 +25,13 @@
       winningTeam = null;
     }
   }
+
+  function nameSizeClass(name) {
+    if (name.length > 20) return 'name-longest';
+    if (name.length > 13) return 'name-long';
+    return 'name-normal';
+  }
+
   console.log('Winning Team:', winningTeam);
   console.log('MVP Player:', mvp);
 </script>
@@ -37,7 +44,9 @@
       <div class="players">
         {#each Object.values(teams.blueTeam) as player}
           <div class="player-card" class:mvp={mvp && mvp.name === player.name && mvp.team === 0}>
-            <strong>{player.name}</strong>
+            <div class = "name">
+              <strong class={nameSizeClass(player.name)} title={player.name}>{player.name}</strong>
+            </div>
             {#if mvp && mvp.name === player.name && mvp.team === 0}
               <span class="mvp-badge">⭐ MVP</span>
             {/if}
@@ -57,7 +66,9 @@
       <div class="players">
         {#each Object.values(teams.orangeTeam) as player}
           <div class="player-card" class:mvp={mvp && mvp.name === player.name && mvp.team === 1}>
-            <strong>{player.name}</strong>
+            <div class = "name">
+              <strong class={nameSizeClass(player.name)} title={player.name}>{player.name}</strong>
+            </div>
             {#if mvp && mvp.name === player.name && mvp.team === 1}
               <span class="mvp-badge">⭐ MVP</span>
             {/if}
@@ -91,11 +102,10 @@
     background: url('../assets/RLSSPostGameBackground1.png') no-repeat center center;
     background-size: cover;
     padding: 2rem 3rem;
-    border-radius: 1.5rem;
     color: white;
-    z-index: 4;
+    z-index: 5;
     box-shadow: 0 0 20px rgba(0,0,0,0.5);
-    width: 1820px;
+    width: 1824px;
     height: 1020px;
   }
 
@@ -151,7 +161,7 @@
 
   .mvp-badge {
     position: absolute;
-    top: 70px;
+    top: 76px;
     right: 104px;
     background: gold;
     color: black;
@@ -174,13 +184,47 @@
     margin-bottom: 0.5rem;
   }
 
-  strong {
+  .name{
+    height: 50px;
+    width: 250px;
+    overflow: visible;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    align-items: center;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+  }
+
+  .name-normal {
     font-size: 34px;
-    max-width: 100px;
+    max-width: 275px;
+    overflow: visible;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+  }
+
+  .name-long {
+    font-size: 20px;
+    max-width: 275px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+  }
+
+  .name-longest {
+    font-size: 20px;
+    max-width: 275px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
   }
 
   .p-score {
-    margin-top: 70px;
+    margin-top: 50px;
     font-size: 28px;
   }
 

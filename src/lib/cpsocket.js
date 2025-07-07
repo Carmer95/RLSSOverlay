@@ -4,7 +4,7 @@ import { writable } from 'svelte/store';
 
 export const panelDataStore = writable({
   currentGame: 1,
-  bestOf: 5,
+  bestOf: 1,
   blueWins: 0,
   orangeWins: 0,
   blueTeam: '',
@@ -12,7 +12,8 @@ export const panelDataStore = writable({
   blueLogo: '',
   orangeLogo: '',
   startSeries: false,
-  seriesOver: false
+  seriesOver: false,
+  seriesInfo: ''
 });
 
 export const panelSocketStatus = writable("disconnected");
