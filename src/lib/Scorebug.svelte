@@ -1,6 +1,7 @@
 <script>
-    import { orangeTeam, blueTeam, timeSeconds, } from "./Processor";
+    import { orangeTeam, blueTeam, timeSeconds, isOT } from "./Processor";
     import { panelDataStore } from "./cpsocket";
+    import { fade } from "svelte/transition";
     
     // let time_seconds = $updateState.game.time_seconds;
 
@@ -16,17 +17,21 @@
     $: currentGame = $panelDataStore.currentGame;
     $: blueNameClass = ($blueTeam?.name?.length ?? 0) > 12 ? 'team-name small' : 'team-name';
     $: orangeNameClass = ($orangeTeam?.name?.length ?? 0) > 12 ? 'team-name small' : 'team-name';
+    $: seriesInfo = $panelDataStore.seriesInfo ?? '';
 
 </script>
 
-<div class="top-bar">
+<div  transition:fade class="top-bar">
     <div class="bgBox">
+        {#if seriesInfo}
+            <div class="series-info">{seriesInfo}</div>
+        {/if}
         <!-- Blue Side -->
         <div class="blue-logo">
             {#if $panelDataStore?.blueLogo}
-                <img class="blueLogo" src={`/TeamLogos/${$panelDataStore.blueLogo}.png`} alt="Blue Logo" width="90" height="90" />
+                <img class="blueLogo" src={`/TeamLogos/${$panelDataStore.blueLogo}`} alt="Blue Logo" width="90" height="90" />
             {:else}
-                <img class="blueLogo"  src={`/TeamLogos/Vertices.png`} alt="Alt Blue Logo" width="90" height="90" />
+                <img class="blueLogo"  src={`/TeamLogos/RLStockLogo.png`} alt="Alt Blue Logo" width="90" height="90" />
             {/if}
         </div>
         <div class="blue-info">
@@ -42,13 +47,23 @@
                     {$blueTeam.score}
                 </div>
             </div>
-            <div class="time">
-                {#if typeof $timeSeconds === 'number' && $timeSeconds >= 0}
-                    {formatTime($timeSeconds)}
-                {:else}
-                    0:00
-                {/if}
-            </div>
+            {#if $isOT}
+                <div class="otTime">
+                    {#if typeof $timeSeconds === 'number' && $timeSeconds >= 0}
+                        +{formatTime($timeSeconds)}
+                    {:else}
+                        0:00
+                    {/if}
+                </div>
+            {:else}
+                <div class="time">
+                    {#if typeof $timeSeconds === 'number' && $timeSeconds >= 0}
+                        {formatTime($timeSeconds)}
+                    {:else}
+                        0:00
+                    {/if}
+                </div>
+            {/if}
             <div class="orange-score-bg">
                 <div class="orange-score">
                     {$orangeTeam.score}
@@ -80,7 +95,7 @@
     {/each}
         </div>
         <div class="details">
-            Game {currentGame ?? '1'} | Best of {$panelDataStore?.bestOf ?? '5'}
+            Game {currentGame ?? '1'} | Best of {$panelDataStore?.bestOf ?? '1'}
         </div>
         <div class="team1Ws oWinBoxContainer">
             <!-- Orange wins -->
@@ -96,6 +111,16 @@
         height: 120px;
         width: 1080px;
         position: absolute;
+        z-index: 6;
+    }
+
+    .series-info{
+        position: absolute;
+        top: -3px;
+        margin: auto;
+        width: 100%;
+        display: flex;
+        justify-content: center;
     }
 
     .blueLogo {
@@ -185,6 +210,17 @@
     .time {
         position:absolute;
         top: 32px;
+    }
+
+    .otTime {
+        position:absolute;
+        top: 38px;
+        text-shadow: 0 0 10px #ff0000;
+        font-size: 38px;
+        left: 438px;
+        width: 120px;
+        display: flex;
+        justify-content: center;
     }
 
     .orange-logo {

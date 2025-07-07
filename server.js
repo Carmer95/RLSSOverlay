@@ -7,13 +7,15 @@ const PORT = 1234;
 // In-memory panel data
 let panelData = {
   currentGame: 1,
-  bestOf: 5,
+  bestOf: 1,
   blueWins: 0,
   orangeWins: 0,
   blueLogo: '',
   orangeLogo: '',
   startSeries: false,
-  seriesOver: false
+  seriesOver: false,
+  seriesInfo: '',
+  overlayVisible: false
 };
 
 // Create HTTP server (only needed to bootstrap WS)
@@ -40,6 +42,26 @@ wss.on('connection', (ws) => {
       const msg = JSON.parse(data.toString());
       let changed = false;
 
+      if ('startSeries' in msg) {
+        panelData.startSeries = msg.startSeries;
+        changed = true;
+      }
+
+      if ('seriesOver' in msg) {
+        panelData.seriesOver = msg.seriesOver;
+        changed = true;
+      }
+
+      if (typeof msg.overlayVisible === 'boolean') {
+        panelData.overlayVisible = msg.overlayVisible;
+        changed = true;
+      }
+
+      if (typeof msg.seriesInfo === 'string') {
+        panelData.seriesInfo = msg.seriesInfo;
+        changed = true;
+      }
+
       if (typeof msg.setGameNumber === 'number') {
         panelData.currentGame = msg.setGameNumber;
         changed = true;
@@ -60,13 +82,13 @@ wss.on('connection', (ws) => {
         changed = true;
       }
 
-      if (typeof msg.blueTeam === 'number') {
-        panelData.blueTeam = msg.blueTeam;
+      if (typeof msg.blueName === 'string') {
+        panelData.blueName = msg.blueName;
         changed = true;
       }
 
-      if (typeof msg.orangeTeam === 'number') {
-        panelData.orangeTeam = msg.orangeTeam;
+      if (typeof msg.orangeName === 'string') {
+        panelData.orangeName = msg.orangeName;
         changed = true;
       }
 
@@ -86,16 +108,6 @@ wss.on('connection', (ws) => {
         }
       }
 
-      if ('startSeries' in msg) {
-        panelData.startSeries = msg.startSeries;
-        changed = true;
-      }
-
-      if ('seriesOver' in msg) {
-        panelData.seriesOver = msg.seriesOver;
-        changed = true;
-      }
-
       if (msg.resetGame) {
         panelData = {
           ...panelData,
@@ -103,7 +115,8 @@ wss.on('connection', (ws) => {
           blueWins: 0,
           orangeWins: 0,
           startSeries: false,
-          seriesOver: false
+          seriesOver: false,
+          overlayVisible: false
         };
         changed = true;
       }

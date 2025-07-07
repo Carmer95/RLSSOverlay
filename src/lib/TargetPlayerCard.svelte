@@ -11,52 +11,56 @@
 
 </script>
 
-{#if $targetPlayer.team === 0}
-    <div class="b-stats">
-        <div class="b-name" style="color: #{teamColor}">
-            {$targetPlayer.name}
-            {#if $mvpPlayer?.id === $targetPlayer.id}
-                <span class="mvp-badge">MVP</span>
-            {/if}
+{#if $targetPlayer?.name}
+    {#if $targetPlayer.team === 0}
+        <div class="b-stats">
+            <div class="b-name">
+                {$targetPlayer.name}
+                {#if $mvpPlayer?.id === $targetPlayer.id && $mvpPlayer.score > 0}
+                    <span class="mvp-badge">MVP</span>
+                {/if}
+            </div>
+            <div class="category">
+                <li class="score">Score</li>
+                <li class="goals">Goals</li>
+                <li class="shots">Shots</li>
+                <li class="assists">Assists</li>
+                <li class="saves">Saves</li>
+            </div>
+            <div class="value">
+                <li class="score-val"><div>{$targetPlayer.score}</div></li>
+                <li class="goals-val"><div>{$targetPlayer.goals}</div></li>
+                <li class="shots-val"><div>{$targetPlayer.shots}</div></li>
+                <li class="assists-val"><div>{$targetPlayer.assists}</div></li>
+                <li class="saves-val"><div>{$targetPlayer.saves}</div></li>
+            </div>
         </div>
-        <div class="category">
-            <li class="score">Score</li>
-            <li class="goals">Goals</li>
-            <li class="shots">Shots</li>
-            <li class="assists">Assists</li>
-            <li class="saves">Saves</li>
+    {:else}
+        <div class="o-stats">
+            <div class="o-name">
+                {$targetPlayer.name}
+                {#if $mvpPlayer?.id === $targetPlayer.id && $mvpPlayer.score > 0}
+                    <span class="mvp-badge">MVP</span>
+                {/if}
+            </div>
+            <div class="category">
+                <li class="score">Score</li>
+                <li class="goals">Goals</li>
+                <li class="shots">Shots</li>
+                <li class="assists">Assists</li>
+                <li class="saves">Saves</li>
+            </div>
+            <div class="value">
+                <li class="score-val"><div>{$targetPlayer.score}</div></li>
+                <li class="goals-val"><div>{$targetPlayer.goals}</div></li>
+                <li class="shots-val"><div>{$targetPlayer.shots}</div></li>
+                <li class="assists-val"><div>{$targetPlayer.assists}</div></li>
+                <li class="saves-val"><div>{$targetPlayer.saves}</div></li>
+            </div>
         </div>
-        <div class="value">
-            <li class="score-val"><div>{$targetPlayer.score}</div></li>
-            <li class="goals-val"><div>{$targetPlayer.goals}</div></li>
-            <li class="shots-val"><div>{$targetPlayer.shots}</div></li>
-            <li class="assists-val"><div>{$targetPlayer.assists}</div></li>
-            <li class="saves-val"><div>{$targetPlayer.saves}</div></li>
-        </div>
-    </div>
+    {/if}
 {:else}
-    <div class="o-stats">
-        <div class="o-name" style="color: #{teamColor}">
-            {$targetPlayer.name}
-            {#if $mvpPlayer?.id === $targetPlayer.id}
-                <span class="mvp-badge">MVP</span>
-            {/if}
-        </div>
-        <div class="category">
-            <li class="score">Score</li>
-            <li class="goals">Goals</li>
-            <li class="shots">Shots</li>
-            <li class="assists">Assists</li>
-            <li class="saves">Saves</li>
-        </div>
-        <div class="value">
-            <li class="score-val"><div>{$targetPlayer.score}</div></li>
-            <li class="goals-val"><div>{$targetPlayer.goals}</div></li>
-            <li class="shots-val"><div>{$targetPlayer.shots}</div></li>
-            <li class="assists-val"><div>{$targetPlayer.assists}</div></li>
-            <li class="saves-val"><div>{$targetPlayer.saves}</div></li>
-        </div>
-    </div>
+        <div style="display: none;"></div>
 {/if}
 
 <style>
@@ -96,7 +100,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        top: 30px;
+        top: 29px;
         left: 280px;
         width: 150px;
         height: 60px;
@@ -106,8 +110,8 @@
         border-bottom-right-radius: 20%;
         font-size: 20px;
         font-weight: bold;
-        /* color: #000; */
-        text-shadow: 0 0 3px #000000, 0 0 5px #ffffff, 0 0 8px #ffffff;
+        color: #ffffff;
+        text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 10px #000000;
     }
 
     .o-name {
@@ -116,7 +120,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        top: 30px;
+        top: 29px;
         left: 280px;
         width: 150px;
         height: 60px;
@@ -126,8 +130,8 @@
         border-bottom-right-radius: 20%;
         font-size: 20px;
         font-weight: bold;
-        /* color: #000; */
-        text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 5px #000000, 0 0 10px #000000;
+        color: #ffffff;
+        text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 10px #000000;
     }
 
     .mvp-badge {
@@ -153,7 +157,7 @@
         font-size: 16px;
         font-weight: bold;
         /* color: #000; */
-        text-shadow: 0 0 5px #000, 0 0 10px #000, 0 0 15px #000, 0 0 20px #fff, 0 0 5px #fff, 0 0 10px #fff, 0 0 10px #fff, 0 0 10px #fff;
+        text-shadow: 0 0 5px #000, 0 0 10px #000, 0 0 10px #000;
     }
     
     .value {
@@ -168,7 +172,7 @@
         font-size: 20px;
         font-weight: bold;
         /* color: #000; */
-        text-shadow: 0 0 5px #000, 0 0 10px #000, 0 0 15px #000, 0 0 20px #fff, 0 0 5px #fff, 0 0 10px #fff, 0 0 10px #fff, 0 0 10px #fff;
+        text-shadow: 0 0 5px #000, 0 0 10px #000, 0 0 10px #000;
     }
 
     li {
@@ -198,7 +202,7 @@
     .shots-val{
         position: absolute;
         margin: auto;
-        right: 228px;
+        right: 227px;
         top: 4px;
     }
 
