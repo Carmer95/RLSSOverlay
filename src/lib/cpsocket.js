@@ -13,7 +13,8 @@ export const panelDataStore = writable({
   orangeLogo: '',
   startSeries: false,
   seriesOver: false,
-  seriesInfo: ''
+  seriesInfo: '', 
+  overlayVisible: false,
 });
 
 export const panelSocketStatus = writable("disconnected");

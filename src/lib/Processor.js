@@ -107,12 +107,20 @@ export const seriesStarted = derived(panelDataStore, ($panelData) => {
   );
 });
 
-export const overlayVisible = writable(false);
+export const manualOverlayOverride = writable(null); // null = auto, otherwise true/false
+const internalAutoOverlay = writable(false);
+
+export const overlayVisible = derived(
+  [manualOverlayOverride, internalAutoOverlay],
+  ([$manual, $auto]) => $manual !== null ? $manual : $auto
+);
 
 // Keep overlayVisible in sync with panelDataStore updates
 panelDataStore.subscribe(($panel) => {
-  if (typeof $panel.overlayVisible === 'boolean') {
-    overlayVisible.set($panel.overlayVisible);
+  if ('overlayVisible' in $panel) {
+    manualOverlayOverride.set(
+      $panel.overlayVisible === null ? null : Boolean($panel.overlayVisible)
+    );
   }
 });
 
@@ -163,7 +171,7 @@ socketMessageStore.subscribe(($msg) => {
     const panel = get(panelDataStore);
     const initId = JSON.stringify($msg.data);
 
-    overlayVisible.set(true);
+    internalAutoOverlay.set(true);
 
     console.log('New game started. ', panel, ' ', initId, ' ', lastHandledGameId, ' ', lastGameInit );
 
@@ -174,10 +182,10 @@ socketMessageStore.subscribe(($msg) => {
 
     const isSeriesMode = panel.bestOf > 1;
 
-   if ((isSeriesMode && !get(seriesStarted)) || panel.seriesOver === true) {
-  console.log('[Processor] Series not started or already over.');
-  return;
-}
+    if ((isSeriesMode && !get(seriesStarted)) || panel.seriesOver === true) {
+      console.log('[Processor] Series not started or already over.');
+      return;
+    }
 
     // Only increment if we're not already at bestOf
     const newGame = panel.currentGame + 1;
@@ -225,7 +233,7 @@ socketMessageStore.subscribe(($msg) => {
       statfeedEvents.update((events) =>
         events.filter((e) => e.id !== newEvent.id)
       );
-    }, 300000);
+    }, 3000);
   }
 }
 
@@ -305,8 +313,8 @@ socketMessageStore.subscribe(($msg) => {
 
     setTimeout(() => {
       postGameVisible.set(true);
-      overlayVisible.set(true);
-    }, 5000);
+      internalAutoOverlay.set(true);
+    }, 5200);
 
   }
 });

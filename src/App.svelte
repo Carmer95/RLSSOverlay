@@ -25,29 +25,18 @@ function truncateName(name, limit = 15) {
 
 console.log(teamsStore);
 
-// Create a map from event names to imported images
-  let images = {};
 
-  onMount(async () => {
-    images['goal'] = (await import('./assets/goal.png')).default;
-    images['save'] = (await import('./assets/save.png')).default;
-    images['assist'] = (await import('./assets/assist.png')).default;
-    images['epic_save'] = (await import('./assets/epic_save.png')).default;
-    images['shot'] = (await import('./assets/shot.png')).default;
-    images['demolition'] = (await import('./assets/demolition.png')).default;
-    images['default'] = (await import('./assets/default.png')).default;
-  });
+function getImage(eventName) {
+  const safeName = eventName.toLowerCase().replace(/\s+/g, '_');
+  return `./assets/stat-icons/${safeName}.svg`;
+}
 
-  function getImage(eventName) {
-    return images[eventName.toLowerCase().replace(/\s+/g, '_')] || images['default'];
-  }
-
-  function hexToRgba(hex, alpha = 0.7) {
-    const r = parseInt(hex.slice(0, 2), 16);
-    const g = parseInt(hex.slice(2, 4), 16);
-    const b = parseInt(hex.slice(4, 6), 16);
-    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-  }
+function hexToRgba(hex, alpha = 0.7) {
+  const r = parseInt(hex.slice(0, 2), 16);
+  const g = parseInt(hex.slice(2, 4), 16);
+  const b = parseInt(hex.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
 
 </script>
 
