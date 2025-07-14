@@ -8,6 +8,7 @@
   import Team1Boost from "./lib/Team1Boost.svelte";
   import Scorebug from "./lib/Scorebug.svelte"; 
   import PostGame from "./lib/PostGame.svelte";
+  import StatfeedEvent from "./lib/StatfeedEvent.svelte";
 
   function processName(name) {
   if (name.length > 9) {
@@ -25,37 +26,18 @@ function truncateName(name, limit = 15) {
 
 console.log(teamsStore);
 
-
-function getImage(eventName) {
-  const safeName = eventName.toLowerCase().replace(/\s+/g, '_');
-  return `/stat-icons/${safeName}.svg`;
-}
-
-function hexToRgba(hex, alpha = 0.7) {
-  const r = parseInt(hex.slice(0, 2), 16);
-  const g = parseInt(hex.slice(2, 4), 16);
-  const b = parseInt(hex.slice(4, 6), 16);
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
-
 </script>
 
 
 <div class="statfeed-stack">
-  {#each $statfeedEvents as event (event.id)}
-    <div
-      transition:fade
-      class="statfeed-container"
-      style="background-color: {event.team === 0 
-      ? hexToRgba($blueTeam.color_primary) 
-      : hexToRgba($orangeTeam.color_primary)}">
-      <img
-        class="statfeed-icon"
-        src={getImage(event.event)}
-        alt={event.event} />
-      <p class="statfeed-text">
-        <strong>{event.name}</strong>
-      </p>
+  {#each $statfeedEvents as rawEvent (rawEvent.id)}
+    <div transition:fade>
+      <StatfeedEvent
+        event={{
+          ...rawEvent,
+          teamColor: rawEvent.team === 0 ? $blueTeam.color_primary : $orangeTeam.color_primary
+        }}
+      />
     </div>
   {/each}
 </div>
@@ -398,6 +380,7 @@ li {
   gap: 8px;
   z-index: 999;
   align-items: flex-end;
+  overflow: hidden;
 }
 
 .statfeed-container {
