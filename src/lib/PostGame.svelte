@@ -117,6 +117,7 @@
     box-shadow: 0 0 20px rgba(0,0,0,0.5);
     width: 1824px;
     height: 1020px;
+    animation: slideIn 0.3s ease-out;
   }
 
   .team-panel {
