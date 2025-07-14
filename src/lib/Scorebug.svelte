@@ -1,109 +1,86 @@
 <script>
-    import { orangeTeam, blueTeam, timeSeconds, isOT } from "./Processor";
-    import { panelDataStore } from "./cpsocket";
-    import { fade } from "svelte/transition";
-    
-    // let time_seconds = $updateState.game.time_seconds;
+  import { orangeTeam, blueTeam, timeSeconds, isOT } from "./Processor";
+  import { panelDataStore } from "./cpsocket";
+  import { fade } from "svelte/transition";
 
-    // Function to convert seconds to "minutes:seconds" format
-    function formatTime(seconds) {
-        if (typeof seconds !== 'number' || isNaN(seconds)) return '0:00';
-        const minutes = Math.floor(seconds / 60);
-        const remainingSeconds = seconds % 60;
-        return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-    }
+  function formatTime(seconds) {
+    if (typeof seconds !== 'number' || isNaN(seconds)) return '0:00';
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  }
 
-    $: console.log('panelDataStore: ', $panelDataStore, 'Panel store currentGame: ', $panelDataStore.currentGame );
-    $: currentGame = $panelDataStore.currentGame;
-    $: blueNameClass = ($blueTeam?.name?.length ?? 0) > 12 ? 'team-name small' : 'team-name';
-    $: orangeNameClass = ($orangeTeam?.name?.length ?? 0) > 12 ? 'team-name small' : 'team-name';
-    $: seriesInfo = $panelDataStore.seriesInfo ?? '';
+  $: panel = $panelDataStore;
+  $: currentGame = panel.currentGame;
+  $: seriesInfo = panel.seriesInfo ?? '';
 
+  $: blueDisplayName = panel.panelBlueTeamName?.trim() || $blueTeam?.name || 'Blue Team';
+  $: orangeDisplayName = panel.panelOrangeTeamName?.trim() || $orangeTeam?.name || 'Orange Team';
+
+  $: blueNameClass = blueDisplayName.length > 12 ? 'team-name small' : 'team-name';
+  $: orangeNameClass = orangeDisplayName.length > 12 ? 'team-name small' : 'team-name';
 </script>
 
-<div  transition:fade class="top-bar">
-    <div class="bgBox">
-        {#if seriesInfo}
-            <div class="series-info">{seriesInfo}</div>
-        {/if}
-        <!-- Blue Side -->
-        <div class="blue-logo">
-            {#if $panelDataStore?.blueLogo}
-                <img class="blueLogo" src={`/TeamLogos/${$panelDataStore.blueLogo}`} alt="Blue Logo" width="90" height="90" />
-            {:else}
-                <img class="blueLogo"  src={`/TeamLogos/RLStockLogo.png`} alt="Alt Blue Logo" width="90" height="90" />
-            {/if}
-        </div>
-        <div class="blue-info">
-            <div class="{blueNameClass}">
-                {($blueTeam?.name) ?? 'Blue Team'}
-            </div>
-        </div>
+<div transition:fade class="top-bar">
+  <div class="bgBox">
+    {#if seriesInfo}
+      <div class="series-info">{seriesInfo}</div>
+    {/if}
 
-        <!-- Game Middle Section -->
-        <div class="game">
-            <div class="blue-score-bg">
-                <div class="blue-score">
-                    {$blueTeam.score}
-                </div>
-            </div>
-            {#if $isOT}
-                <div class="otTime">
-                    {#if typeof $timeSeconds === 'number' && $timeSeconds >= 0}
-                        +{formatTime($timeSeconds)}
-                    {:else}
-                        0:00
-                    {/if}
-                </div>
-            {:else}
-                <div class="time">
-                    {#if typeof $timeSeconds === 'number' && $timeSeconds >= 0}
-                        {formatTime($timeSeconds)}
-                    {:else}
-                        0:00
-                    {/if}
-                </div>
-            {/if}
-            <div class="orange-score-bg">
-                <div class="orange-score">
-                    {$orangeTeam.score}
-                </div>
-            </div>
-        </div>
-
-        <!-- Orange Side -->
-        <div class="orange-info">
-            <div class="{orangeNameClass}">
-                {($orangeTeam?.name) ?? 'Orange Team'}
-            </div>
-        </div>
-        <div class="orange-logo">
-            {#if $panelDataStore?.orangeLogo}
-                <img class="orangeLogo" src={`/TeamLogos/${$panelDataStore.orangeLogo}`} alt="Orange Logo" width="90" height="90" />
-            {:else}
-                <img class="orangeLogo" src={`/TeamLogos/RLStockLogo.png`} alt="Alt Orange Logo" width="90" height="90" />
-            {/if}
-        </div>
+    <!-- Blue Side -->
+    <div class="blue-logo">
+      <img class="blueLogo" src={`/TeamLogos/${panel.blueLogo || 'RLStockLogo.png'}`} alt="Blue Logo" width="90" height="90" />
+    </div>
+    <div class="blue-info">
+      <div class="{blueNameClass}">{blueDisplayName}</div>
     </div>
 
-    <!-- Match Info -->
-    <div class="match-info">
-        <div class="team0Ws bWinBoxContainer">
-            <!-- Blue wins -->
-            {#each Array(Math.ceil(($panelDataStore?.bestOf ?? 5) / 2)).fill(0).map((_, i) => i) as i (i)}
-        <div class="winBox {((Math.ceil(($panelDataStore?.bestOf ?? 5) / 2) - 1 - i) < ($panelDataStore?.blueWins ?? 0)) ? 'blue active' : ''}"></div>
-    {/each}
-        </div>
-        <div class="details">
-            Game {currentGame ?? '1'} | Best of {$panelDataStore?.bestOf ?? '1'}
-        </div>
-        <div class="team1Ws oWinBoxContainer">
-            <!-- Orange wins -->
-            {#each Array(Math.ceil(($panelDataStore?.bestOf ?? 5) / 2)).fill(0).map((_, i) => i) as i}
-                <div class="winBox {i < ($panelDataStore?.orangeWins ?? 0) ? 'orange active' : ''}"></div>
-            {/each}
-        </div>
+    <!-- Game Center -->
+    <div class="game">
+      <div class="blue-score-bg">
+        <div class="blue-score">{$blueTeam.score}</div>
+      </div>
+
+      {#if $isOT}
+        <div class="otTime">+{formatTime($timeSeconds)}</div>
+      {:else}
+        <div class="time">{formatTime($timeSeconds)}</div>
+      {/if}
+
+      <div class="orange-score-bg">
+        <div class="orange-score">{$orangeTeam.score}</div>
+      </div>
     </div>
+
+    <!-- Orange Side -->
+    <div class="orange-info">
+      <div class="{orangeNameClass}">{orangeDisplayName}</div>
+    </div>
+    <div class="orange-logo">
+      <img class="orangeLogo" src={`/TeamLogos/${panel.orangeLogo || 'RLStockLogo.png'}`} alt="Orange Logo" width="90" height="90" />
+    </div>
+  </div>
+
+  <!-- Match Info -->
+  <div class="match-info">
+    <!-- Blue Wins -->
+    <div class="team0Ws bWinBoxContainer">
+      {#each Array(Math.ceil((panel.bestOf ?? 5) / 2)).fill(0).map((_, i) => i) as i (i)}
+        <div class="winBox {((Math.ceil((panel.bestOf ?? 5) / 2) - 1 - i) < (panel.blueWins ?? 0)) ? 'blue active' : ''}"></div>
+      {/each}
+    </div>
+
+    <div class="details">
+      Game {currentGame ?? '1'} | Best of {panel.bestOf ?? '1'}
+    </div>
+
+    <!-- Orange Wins -->
+    <div class="team1Ws oWinBoxContainer">
+      {#each Array(Math.ceil((panel.bestOf ?? 5) / 2)).fill(0).map((_, i) => i) as i}
+        <div class="winBox {i < (panel.orangeWins ?? 0) ? 'orange active' : ''}"></div>
+      {/each}
+    </div>
+  </div>
 </div>
 
 <style>

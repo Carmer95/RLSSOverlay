@@ -1,5 +1,15 @@
 <script>
-  import { postGameVisible, blueTeam, orangeTeam, teamsStore, updateState, mvpPlayer } from './Processor.js';
+  import {
+    postGameVisible,
+    blueTeam,
+    orangeTeam,
+    teamsStore,
+    updateState,
+    mvpPlayer,
+    panelBlueTeamName,
+    panelOrangeTeamName
+  } 
+  from './Processor.js';
   import { fade, scale } from 'svelte/transition';
   import { onDestroy } from 'svelte';
 
@@ -39,7 +49,7 @@
 {#if show}
   <div class="postgame-overlay" transition:fade>
     <div class="team-panel" class:winner={winningTeam === 0} transition:scale={{ duration: 400 }}>
-      <h2>{$blueTeam.name || 'Blue Team'}</h2>
+      <h2>{$panelBlueTeamName}</h2>
       <p class="score">Goals: {blue.score ?? 0}</p>
       <div class="players">
         {#each Object.values(teams.blueTeam) as player}
@@ -61,7 +71,7 @@
     </div>
 
     <div class="team-panel" class:winner={winningTeam === 1} transition:scale={{ duration: 400 }}>
-      <h2>{$orangeTeam.name || 'Orange Team'}</h2>
+      <h2>{$panelOrangeTeamName}</h2>
       <p class="score">Goals: {orange.score ?? 0}</p>
       <div class="players">
         {#each Object.values(teams.orangeTeam) as player}
