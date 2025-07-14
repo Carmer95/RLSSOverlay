@@ -12,6 +12,8 @@ let panelData = {
   orangeWins: 0,
   blueLogo: '',
   orangeLogo: '',
+  panelBlueTeamName: '',
+  panelOrangeTeamName: '',
   startSeries: false,
   seriesOver: false,
   seriesInfo: '',
@@ -82,13 +84,13 @@ wss.on('connection', (ws) => {
         changed = true;
       }
 
-      if (typeof msg.blueName === 'string') {
-        panelData.blueName = msg.blueName;
+      if (typeof msg.panelBlueTeamName === 'string') {
+        panelData.panelBlueTeamName = msg.panelBlueTeamName.trim();
         changed = true;
       }
 
-      if (typeof msg.orangeName === 'string') {
-        panelData.orangeName = msg.orangeName;
+      if (typeof msg.panelOrangeTeamName === 'string') {
+        panelData.panelOrangeTeamName = msg.panelOrangeTeamName.trim();
         changed = true;
       }
 

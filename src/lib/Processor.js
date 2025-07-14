@@ -137,6 +137,25 @@ updateState.subscribe(($update) => {
 // Post-game UI visibility
 export const postGameVisible = writable(false);
 
+export const podiumActive = writable(false);
+
+export const panelBlueTeamName = derived(
+  [panelDataStore, updateState],
+  ([$panel, $update]) => {
+    const override = $panel?.panelBlueTeamName?.trim();
+    const inGame = $update?.game?.teams?.[0]?.name?.trim();
+    return override || inGame || 'Blue';
+  }
+);
+
+export const panelOrangeTeamName = derived(
+  [panelDataStore, updateState],
+  ([$panel, $update]) => {
+    const override = $panel?.panelOrangeTeamName?.trim();
+    const inGame = $update?.game?.teams?.[1]?.name?.trim();
+    return override || inGame || 'Orange';
+  }
+);
 
 // --- WebSocket-only update sender ---
 function sendPanelUpdate(message) {
@@ -307,6 +326,8 @@ socketMessageStore.subscribe(($msg) => {
   if ($msg.event === 'game:podium_start') {
     console.log('Podium');
     manualOverlayOverride.set(null);
+    podiumActive.set(true);
+
     const panel = get(panelDataStore);
     console.log(panel)
 
@@ -322,7 +343,8 @@ socketMessageStore.subscribe(($msg) => {
     setTimeout(() => {
       postGameVisible.set(true);
       internalAutoOverlay.set(true);
-    }, 5200);
+      podiumActive.set(false);
+    }, 5100);
 
   }
 });

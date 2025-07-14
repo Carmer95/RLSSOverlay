@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import Boost from "./lib/Boost.svelte";
   import { fade } from 'svelte/transition';
-  import {  orangeTeam, blueTeam, teamsStore, targetPlayer, isOT, isReplay, postGameVisible, overlayVisible, roundStarted, statfeedEvents, shouldShowOverlay } from "./lib/Processor";
+  import {  orangeTeam, blueTeam, teamsStore, targetPlayer, isOT, isReplay, postGameVisible, podiumActive, roundStarted, statfeedEvents, shouldShowOverlay } from "./lib/Processor";
   import TargetPlayerCard from "./lib/TargetPlayerCard.svelte";
   import Team0Boost from "./lib/Team0Boost.svelte";
   import Team1Boost from "./lib/Team1Boost.svelte";
@@ -60,8 +60,7 @@ function hexToRgba(hex, alpha = 0.7) {
   {/each}
 </div>
 <main>
-
-  {#if $shouldShowOverlay}
+  {#if $shouldShowOverlay && !$podiumActive}
 
     {#if $postGameVisible}
       <!--  PostGame shown only when postGameVisible is true -->
