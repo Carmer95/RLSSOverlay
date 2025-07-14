@@ -107,6 +107,7 @@ export const seriesStarted = derived(panelDataStore, ($panelData) => {
   );
 });
 
+
 export const manualOverlayOverride = writable(null); // null = auto, otherwise true/false
 const internalAutoOverlay = writable(false);
 
@@ -115,9 +116,11 @@ export const overlayVisible = derived(
   ([$manual, $auto]) => $manual !== null ? $manual : $auto
 );
 
+export const shouldShowOverlay = overlayVisible;
+
 // Keep overlayVisible in sync with panelDataStore updates
 panelDataStore.subscribe(($panel) => {
-  if ('overlayVisible' in $panel) {
+  if ($panel && 'overlayVisible' in $panel) {
     manualOverlayOverride.set(
       $panel.overlayVisible === null ? null : Boolean($panel.overlayVisible)
     );
@@ -150,6 +153,7 @@ function sendPanelUpdate(message) {
 let lastHandledGameId = null;
 let lastGameInit = 0;
 let resetTimeout = null;
+const DEBOUNCE_MS = 3000;
 
 // --- Match logic ---
 socketMessageStore.subscribe(($msg) => {
@@ -163,6 +167,8 @@ socketMessageStore.subscribe(($msg) => {
     if (panel.seriesOver === true) {
       console.log('[Processor] New match created after series ended — resetting series immediately');
       sendPanelUpdate({ resetGame: true });
+      postGameVisible.set(false);
+      manualOverlayOverride.set(null);
       return; // Exit early to prevent other logic from running
     }
   }
@@ -204,11 +210,13 @@ socketMessageStore.subscribe(($msg) => {
   }
 
   if ($msg.event === 'game:round_started_go') {
-    console.log('[Processor] Round started — enabling overlay display');
     roundStarted.set(true);
+    setTimeout(() => {
+      internalAutoOverlay.set(true); // ✅ Show 3s after round starts
+    }, DEBOUNCE_MS);
   }
 
-  if ($msg.event === 'game:match_destroyed' || $msg.event === 'game:initialized') {
+  if ($msg.event === 'game:match_destroyed') {
     roundStarted.set(false);
   }
 
@@ -233,7 +241,7 @@ socketMessageStore.subscribe(($msg) => {
       statfeedEvents.update((events) =>
         events.filter((e) => e.id !== newEvent.id)
       );
-    }, 3000);
+    }, DEBOUNCE_MS);
   }
 }
 
@@ -290,7 +298,7 @@ socketMessageStore.subscribe(($msg) => {
   
   if ($msg.event === 'game:match_destroyed') {
     postGameVisible.set(false);
-    overlayVisible.set(false);
+    manualOverlayOverride.set(null);
     isReplay.set(false);
     targetPlayer.set({});
     console.log('[Processor] match_destroyed — Overlay set to false');
@@ -298,7 +306,7 @@ socketMessageStore.subscribe(($msg) => {
 
   if ($msg.event === 'game:podium_start') {
     console.log('Podium');
-    overlayVisible.set(false);
+    manualOverlayOverride.set(null);
     const panel = get(panelDataStore);
     console.log(panel)
 

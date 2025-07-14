@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import Boost from "./lib/Boost.svelte";
   import { fade } from 'svelte/transition';
-  import {  orangeTeam, blueTeam, teamsStore, targetPlayer, isOT, isReplay, postGameVisible, overlayVisible, roundStarted, statfeedEvents } from "./lib/Processor";
+  import {  orangeTeam, blueTeam, teamsStore, targetPlayer, isOT, isReplay, postGameVisible, overlayVisible, roundStarted, statfeedEvents, shouldShowOverlay } from "./lib/Processor";
   import TargetPlayerCard from "./lib/TargetPlayerCard.svelte";
   import Team0Boost from "./lib/Team0Boost.svelte";
   import Team1Boost from "./lib/Team1Boost.svelte";
@@ -28,7 +28,7 @@ console.log(teamsStore);
 
 function getImage(eventName) {
   const safeName = eventName.toLowerCase().replace(/\s+/g, '_');
-  return `./assets/stat-icons/${safeName}.svg`;
+  return `/stat-icons/${safeName}.svg`;
 }
 
 function hexToRgba(hex, alpha = 0.7) {
@@ -61,7 +61,7 @@ function hexToRgba(hex, alpha = 0.7) {
 </div>
 <main>
 
-  {#if $overlayVisible}
+  {#if $shouldShowOverlay}
 
     {#if $postGameVisible}
       <!--  PostGame shown only when postGameVisible is true -->
@@ -135,34 +135,34 @@ function hexToRgba(hex, alpha = 0.7) {
         {/if}
       {/if}
     {/if}
-  {/if}
-  
-  <!-- Overtime -->
-  {#if $isOT}
-    <p  transition:fade class="overtime">OT</p>
-  {/if}
 
-  <!-- Replay -->
-  {#if $isReplay && !$postGameVisible}
-    <div class="replayBorder">
-      <p  transition:fade class="replay">REPLAY</p>
-      {#if $targetPlayer?.name}
-        <div  transition:fade class="currentlySpectating">
-          <div class="statCard">
-            <TargetPlayerCard
-              teamColor={$targetPlayer.team === 0 ? $blueTeam.color_primary : $orangeTeam.color_primary}
-            />
+    <!-- Overtime -->
+    {#if $isOT}
+      <p  transition:fade class="overtime">OT</p>
+    {/if}
+
+    <!-- Replay -->
+    {#if $isReplay && !$postGameVisible}
+      <div class="replayBorder">
+        <p  transition:fade class="replay">REPLAY</p>
+        {#if $targetPlayer?.name}
+          <div  transition:fade class="currentlySpectating">
+            <div class="statCard">
+              <TargetPlayerCard
+                teamColor={$targetPlayer.team === 0 ? $blueTeam.color_primary : $orangeTeam.color_primary}
+              />
+            </div>
+            <div class="boost">
+              {#if $targetPlayer.team === 0}
+                <Boost percent="{$targetPlayer.boost}" color="#{$blueTeam.color_primary}" />
+              {:else}
+                <Boost percent="{$targetPlayer.boost}" color="#{$orangeTeam.color_primary}" />
+              {/if}
+            </div>
           </div>
-          <div class="boost">
-            {#if $targetPlayer.team === 0}
-              <Boost percent="{$targetPlayer.boost}" color="#{$blueTeam.color_primary}" />
-            {:else}
-              <Boost percent="{$targetPlayer.boost}" color="#{$orangeTeam.color_primary}" />
-            {/if}
-          </div>
-        </div>
-      {/if}
-    </div>
+        {/if}
+      </div>
+    {/if}
   {/if}
 
 </main>

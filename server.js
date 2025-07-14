@@ -52,7 +52,7 @@ wss.on('connection', (ws) => {
         changed = true;
       }
 
-      if (typeof msg.overlayVisible === 'boolean') {
+      if ('overlayVisible' in msg) {
         panelData.overlayVisible = msg.overlayVisible;
         changed = true;
       }
