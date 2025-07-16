@@ -28,7 +28,6 @@ console.log(teamsStore);
 
 </script>
 
-
 <div class="statfeed-stack">
   {#each $statfeedEvents as rawEvent (rawEvent.id)}
     <div transition:fade>
@@ -42,6 +41,7 @@ console.log(teamsStore);
   {/each}
 </div>
 <main>
+
   {#if $shouldShowOverlay && !$podiumActive}
 
     {#if $postGameVisible}
@@ -286,7 +286,8 @@ li {
 }
 
 .blue-boost {
-  margin: 0px;
+  width: 50px;
+  margin: 0px 0px 0px 30px;
   position: relative;
   font-size: 28px;
   text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 15px #000000;
@@ -297,7 +298,8 @@ li {
 }
 
 .orange-boost {
-  margin: 0px;
+  width: 50px;
+  margin: 0px 0px 0px 12px;
   position: relative;
   font-size: 28px;
   text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 15px #000000;

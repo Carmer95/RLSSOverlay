@@ -23,7 +23,7 @@ export const orangeTeam = derived(updateState, ($update, set) => {
   set($update?.game?.teams?.[1] ?? {});
 });
 
-// Existing derived store for live updates
+// Target player stores
 const rawTargetPlayer = derived(updateState, ($update, set) => {
   if ($update?.game?.hasTarget) {
     set($update.players[$update.game.target]);
@@ -32,7 +32,7 @@ const rawTargetPlayer = derived(updateState, ($update, set) => {
   }
 });
 
-// New persistent store
+// Persistent store
 export const targetPlayer = writable({});
 
 // Update the targetPlayer only if valid data is available
@@ -79,7 +79,7 @@ const rawMvpPlayer = derived(updateState, ($update, set) => {
   }
 });
 
-// New persistent MVP store
+// Persistent MVP store
 export const mvpPlayer = writable({});
 
 // Only update if the MVP data is valid
@@ -136,9 +136,10 @@ updateState.subscribe(($update) => {
 
 // Post-game UI visibility
 export const postGameVisible = writable(false);
-
 export const podiumActive = writable(false);
+export const postGameTimerActive = writable(false);
 
+// Team name overrides or fallback to in-game names
 export const panelBlueTeamName = derived(
   [panelDataStore, updateState],
   ([$panel, $update]) => {
@@ -329,6 +330,8 @@ socketMessageStore.subscribe(($msg) => {
     podiumActive.set(true);
 
     const panel = get(panelDataStore);
+    postGameTimerActive.set(false); // Reset
+    postGameVisible.set(false);     // Reset
     console.log(panel)
 
     if (panel.seriesOver) {
@@ -342,9 +345,10 @@ socketMessageStore.subscribe(($msg) => {
 
     setTimeout(() => {
       postGameVisible.set(true);
+      postGameTimerActive.set(true); 
       internalAutoOverlay.set(true);
       podiumActive.set(false);
-    }, 5100);
 
+    }, 5100); // Postgame screen lasts 5 seconds, this allows team celebration before the overlay reappears
   }
 });
