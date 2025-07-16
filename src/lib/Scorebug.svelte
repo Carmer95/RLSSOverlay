@@ -1,14 +1,25 @@
 <script>
-  import { orangeTeam, blueTeam, timeSeconds, isOT } from "./Processor";
+  import { 
+    orangeTeam, 
+    blueTeam, 
+    timeSeconds, 
+    isOT, 
+    postGameVisible 
+  } from "./Processor";
+  import PostGameTimer from './PostGameTimer.svelte';
   import { panelDataStore } from "./cpsocket";
   import { fade } from "svelte/transition";
 
+  // Format seconds to M:SS
   function formatTime(seconds) {
     if (typeof seconds !== 'number' || isNaN(seconds)) return '0:00';
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   }
+
+  // Reactive store subscriptions
+  $: isPostGame = $postGameVisible;
 
   $: panel = $panelDataStore;
   $: currentGame = panel.currentGame;
@@ -19,6 +30,7 @@
 
   $: blueNameClass = blueDisplayName.length > 12 ? 'team-name small' : 'team-name';
   $: orangeNameClass = orangeDisplayName.length > 12 ? 'team-name small' : 'team-name';
+
 </script>
 
 <div transition:fade class="top-bar">
@@ -41,7 +53,9 @@
         <div class="blue-score">{$blueTeam.score}</div>
       </div>
 
-      {#if $isOT}
+      {#if isPostGame}
+        <PostGameTimer />
+      {:else if $isOT}
         <div class="otTime">+{formatTime($timeSeconds)}</div>
       {:else}
         <div class="time">{formatTime($timeSeconds)}</div>
@@ -188,6 +202,57 @@
         position:absolute;
         top: 32px;
     }
+
+    /* .countdown-container {
+        position: absolute;
+        width: 220px;
+        height: 130px;
+        top: 1px;
+        background-color: rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        overflow: visible;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        color: white;
+        text-shadow: 0 0 3px black;
+        clip-path: polygon(50% 25%, 70% 25%, 67% 32%, 65% 40%, 64% 47%, 64% 54%, 65% 62%, 67% 68%, 69% 74%, 72% 80%, 77% 87%, 
+        23% 87%, 28% 80%, 31% 74%, 33% 68%, 35% 61%, 36% 54%, 36% 47%, 35% 40%, 33% 32%, 
+        30% 25%);
+    }
+
+    .countdown-bar {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background-color: rgba(255, 255, 255, 0.7);
+        transition: height 1s linear;
+        border-radius: 12px 12px 0 0;
+        z-index: 2;
+    }
+
+    .countdown-top-shape {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 2;
+        
+        
+    }
+
+    .countdown-text {
+        position: relative;
+        z-index: 3;
+        font-size: 20px;
+        user-select: none;
+    } */
+
 
     .otTime {
         position:absolute;
