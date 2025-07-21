@@ -70,13 +70,10 @@
 		margin-left: -8px;
 	}
 
-	.statfeed-icon.demolish {
-		height: 33px;
-	}
-
 	/* You could make a demo one pop */
 	.statfeed-icon.demolish {
 		animation: rotatePulse 1.2s infinite;
+		height: 32px;
 	}
 
 	/* Or tweak assist coloring 
@@ -87,7 +84,7 @@
 	/* Example animation */
 	@keyframes rotatePulse {
 		0% { transform: rotate(0deg) scale(1); }
-		50% { transform: rotate(10deg) scale(1.05); }
+		50% { transform: rotate(10deg) scale(1.1); }
 		100% { transform: rotate(0deg) scale(1); }
 	}
 
