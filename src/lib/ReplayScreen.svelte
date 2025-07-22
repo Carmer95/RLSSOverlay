@@ -11,14 +11,16 @@
 
     <div class="goal-info">
     <div class="goal-details">
-        <strong>Scorer:</strong>
+        <img src="/stat-icons/goal.svg" alt="Goal Icon" class="stat-icon" />
         <p class="scorer-name">{$goalScoredEvent.scorer.name}</p>
-        {#if $goalScoredEvent.assister.name}
-        <strong>Assist:</strong> 
-        <p class="assister-name">{$goalScoredEvent.assister.name}</p>
-        {/if}
-        <strong>Speed:</strong> 
+
+        <img src="/stat-icons/shot.svg" alt="Speed Icon" class="stat-icon" />
         <p class="speed">{Math.round($goalScoredEvent.speed)} km/h</p>
+
+        {#if $goalScoredEvent.assister.name}
+            <img src="/stat-icons/assist.svg" alt="Assist Icon" class="stat-icon" />
+            <p class="assister-name">{$goalScoredEvent.assister.name}</p>
+        {/if}
     </div>
     </div>
     <div class="goal-overlay">
@@ -94,12 +96,26 @@
 
 .scorer-name {
     font-family: "Nosifer", serif;
-    margin: 0px 40px 0px 16px;
+    margin: 4px 40px 0px 10px;
 }
 
 .speed {
     font-family: "Nosifer", serif;
-    margin: 0px 20px 0px 16px;
+    margin: 4px 40px 0px 10px;
+}
+
+.assister-name {
+    font-family: "Nosifer", serif;
+    margin: 4px 40px 0px 10px;
+}
+
+.stat-icon {
+  height: 40px;
+  width: 40px;
+  margin-right: 8px;
+  margin-left: 20px;
+  vertical-align: middle;
+  filter: brightness(0) invert(1);
 }
 
 </style>
