@@ -9,12 +9,22 @@
     //     name.style.backgroundColor = "blue";
     // }
 
+    $: nameLengthClass = $targetPlayer?.name
+    ? $targetPlayer.name.length > 9
+    ? 'player-name-l'
+    : $targetPlayer.name.length > 5
+    ? 'player-name-m'
+    : $targetPlayer.name.length > 1
+    ? 'player-name-s'
+    : ''
+    : '';
+
 </script>
 
 {#if $targetPlayer?.name}
     {#if $targetPlayer.team === 0}
         <div class="b-stats">
-            <div class="b-name">
+            <div class={`b-name ${nameLengthClass}`}>
                 {$targetPlayer.name}
                 {#if $mvpPlayer?.id === $targetPlayer.id && $mvpPlayer.score > 0}
                     <span class="mvp-badge">MVP</span>
@@ -37,7 +47,7 @@
         </div>
     {:else}
         <div class="o-stats">
-            <div class="o-name">
+            <div class={`o-name ${nameLengthClass}`}>
                 {$targetPlayer.name}
                 {#if $mvpPlayer?.id === $targetPlayer.id && $mvpPlayer.score > 0}
                     <span class="mvp-badge">MVP</span>
@@ -101,17 +111,17 @@
         justify-content: center;
         align-items: center;
         top: 30px;
-        left: 280px;
+        left: 276px;
         width: 150px;
         height: 60px;
         /* background-color: rgba(128, 128, 128, 0.404); */
         /* border-radius: 5px; */
         border-bottom-left-radius: 20%;
         border-bottom-right-radius: 20%;
-        font-size: 20px;
         font-weight: bold;
         color: #ffffff;
         text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 10px #000000;
+        transition: font-size 0.3s ease, width 0.3s ease;
     }
 
     .o-name {
@@ -121,17 +131,29 @@
         justify-content: center;
         align-items: center;
         top: 30px;
-        left: 280px;
+        left: 276px;
         width: 150px;
         height: 60px;
         /* background-color: rgba(128, 128, 128, 0.404); */
         /* border-radius: 5px; */
         border-bottom-left-radius: 20%;
         border-bottom-right-radius: 20%;
-        font-size: 20px;
         font-weight: bold;
         color: #ffffff;
         text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 10px #000000;
+        transition: font-size 0.3s ease, width 0.3s ease;
+    }
+
+    .player-name-s {
+        font-size: 24px;
+    }
+
+    .player-name-m {
+        font-size: 22px;
+    }
+
+    .player-name-l {
+        font-size: 20px;
     }
 
     .mvp-badge {
