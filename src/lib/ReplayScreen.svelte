@@ -14,8 +14,8 @@
         <strong>Scorer:</strong>
         <p class="scorer-name">{$goalScoredEvent.scorer.name}</p>
         {#if $goalScoredEvent.assister.name}
-        &nbsp; • &nbsp; <strong>Assist:</strong> 
-        <p class="scorer-name">{$goalScoredEvent.assister.name}</p>
+        <strong>Assist:</strong> 
+        <p class="assister-name">{$goalScoredEvent.assister.name}</p>
         {/if}
         <strong>Speed:</strong> 
         <p class="speed">{Math.round($goalScoredEvent.speed)} km/h</p>
