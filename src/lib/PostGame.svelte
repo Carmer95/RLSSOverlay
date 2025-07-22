@@ -4,10 +4,10 @@
     blueTeam,
     orangeTeam,
     teamsStore,
-    updateState,
     mvpPlayer,
     panelBlueTeamName,
-    panelOrangeTeamName
+    panelOrangeTeamName,
+    postGameWinnerName
   } 
   from './Processor.js';
   import { fade, scale } from 'svelte/transition';
@@ -17,20 +17,34 @@
   const unsubscribe = postGameVisible.subscribe(value => show = value);
   onDestroy(() => unsubscribe());
 
-  // Store values
+// Store values
   let blue = {};
   let orange = {};
   let teams = {};
-  let winningTeam = null;
   let mvp = null;
+  let winningTeam = null;
 
-  $: $blueTeam && (blue = $blueTeam);
-  $: $orangeTeam && (orange = $orangeTeam);
-  $: $teamsStore && (teams = $teamsStore);
-  $: $mvpPlayer && (mvp = $mvpPlayer);
+  // Auto-subscribe to store values
+  $: blue = $blueTeam || {};
+  $: orange = $orangeTeam || {};
+  $: teams = $teamsStore || {};
+  $: mvp = $mvpPlayer || null;
+
+  // Names from panel overrides or fallback to in-game names
+  $: blueName = (typeof $panelBlueTeamName === 'string' ? $panelBlueTeamName.trim() : '') || (blue.name || '');
+  $: orangeName = (typeof $panelOrangeTeamName === 'string' ? $panelOrangeTeamName.trim() : '') || (orange.name || '');
+  $: winnerName = (typeof $postGameWinnerName === 'string' ? $postGameWinnerName.trim() : '') || '';
+
+  // Determine winning team by comparing winnerName to team names (case-insensitive)
   $: {
-    if ($updateState?.game?.hasWinner) {
-      winningTeam = $updateState.game.winner_team_num;
+    const w = winnerName.toLowerCase();
+    const b = blueName.toLowerCase();
+    const o = orangeName.toLowerCase();
+
+    if (w && w === b) {
+      winningTeam = 0;
+    } else if (w && w === o) {
+      winningTeam = 1;
     } else {
       winningTeam = null;
     }
@@ -118,9 +132,12 @@
     width: 1824px;
     height: 1020px;
     animation: slideIn 0.3s ease-out;
+    flex-direction: row;
   }
 
   .team-panel {
+    display: flex;
+    flex-direction: column;
     margin-top: 140px;
     flex: 1;
     text-align: center;
@@ -131,12 +148,13 @@
     color: black;
     font-weight: 700;
     text-shadow: 0 0 5px #FFF, 0 0 10px #FFF, 0 0 15px #FFF, 0 0 20px #000000;
+    max-height: 800px;
   }
 
   .team-panel.winner {
     border: 3px solid gold;
     box-shadow: 0 0 20px gold;
-    transform: scale(1.10);
+    /* transform: scale(1.10); */
   }
 
   .score {
@@ -158,6 +176,10 @@
     transition: background 0.3s;
     height: 576px;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 
   .player-card:hover {
@@ -172,8 +194,8 @@
 
   .mvp-badge {
     position: absolute;
+    margin-top: 10px;
     top: 76px;
-    right: 104px;
     background: gold;
     color: black;
     font-weight: bold;
@@ -193,6 +215,7 @@
   h2 {
     font-size: 3rem;
     margin-bottom: 0.5rem;
+    font-family: "Nosifer", serif;
   }
 
   .name{
@@ -205,6 +228,8 @@
     text-align: center;
     display: flex;
     justify-content: center;
+    margin: 0;
+    font-family: "Nosifer", serif;
   }
 
   .name-normal {
@@ -214,24 +239,27 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     display: inline-block;
+    font-family: "Nosifer", serif;
   }
 
   .name-long {
     font-size: 20px;
     max-width: 275px;
-    overflow: hidden;
+    overflow: visible;
     text-overflow: ellipsis;
     white-space: nowrap;
     display: inline-block;
+    font-family: "Nosifer", serif;
   }
 
   .name-longest {
     font-size: 20px;
     max-width: 275px;
-    overflow: hidden;
+    overflow: visible;
     text-overflow: ellipsis;
     white-space: nowrap;
     display: inline-block;
+    font-family: "Nosifer", serif;
   }
 
   .p-score {

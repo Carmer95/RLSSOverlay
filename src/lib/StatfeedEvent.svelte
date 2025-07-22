@@ -73,7 +73,7 @@
 	/* You could make a demo one pop */
 	.statfeed-icon.demolish {
 		animation: rotatePulse 1.2s infinite;
-		height: 32px;
+		height: 30px;
 	}
 
 	/* Or tweak assist coloring 
@@ -84,7 +84,7 @@
 	/* Example animation */
 	@keyframes rotatePulse {
 		0% { transform: rotate(0deg) scale(1); }
-		50% { transform: rotate(10deg) scale(1.1); }
+		50% { transform: rotate(10deg) scale(1.05); }
 		100% { transform: rotate(0deg) scale(1); }
 	}
 

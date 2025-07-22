@@ -103,7 +103,7 @@
     bottom: 0;
     left: 0;
     width: 100%;
-    background-color: rgba(255, 255, 255, 0.7);
+    background-color: rgba(83, 200, 255, 0.5);
     transition: height 1s linear;
     z-index: 2;
   }

@@ -4,7 +4,7 @@
     blueTeam, 
     timeSeconds, 
     isOT, 
-    postGameVisible 
+    postGameVisible
   } from "./Processor";
   import PostGameTimer from './PostGameTimer.svelte';
   import { panelDataStore } from "./cpsocket";
@@ -31,6 +31,9 @@
   $: blueNameClass = blueDisplayName.length > 12 ? 'team-name small' : 'team-name';
   $: orangeNameClass = orangeDisplayName.length > 12 ? 'team-name small' : 'team-name';
 
+  $: orangeScoreLeft = $orangeTeam.score >= 10 ? '564px' : '576px';
+  $: blueScoreRight = $blueTeam.score >= 10 ? '564px' : '576px';
+
 </script>
 
 <div transition:fade class="top-bar">
@@ -50,7 +53,7 @@
     <!-- Game Center -->
     <div class="game">
       <div class="blue-score-bg">
-        <div class="blue-score">{$blueTeam.score}</div>
+        <div class="blue-score" style="right: {blueScoreRight}">{$blueTeam.score}</div>
       </div>
 
       {#if isPostGame}
@@ -62,7 +65,7 @@
       {/if}
 
       <div class="orange-score-bg">
-        <div class="orange-score">{$orangeTeam.score}</div>
+        <div class="orange-score" style="left: {orangeScoreLeft}">{$orangeTeam.score}</div>
       </div>
     </div>
 
@@ -85,7 +88,11 @@
     </div>
 
     <div class="details">
-      Game {currentGame ?? '1'} | Best of {panel.bestOf ?? '1'}
+      {#if $postGameVisible}
+        Game Over
+      {:else}
+        Game {currentGame ?? '1'} | Best of {panel.bestOf ?? '1'}
+      {/if}
     </div>
 
     <!-- Orange Wins -->
@@ -150,10 +157,11 @@
         word-break: break-word;
         white-space: normal;
         flex-direction: column;
+        font-family: "Nosifer", serif;
     }
 
     .team-name.small {
-        font-size: 24px;
+        font-size: 22px;
     }
 
     .blue-info {
@@ -312,7 +320,7 @@
         position: absolute;
         z-index: 5;
         margin: auto;
-        top: 122px;
+        top: 120px;
         left: 615px;
         width: 690px;
         height: 20px;
@@ -329,35 +337,36 @@
     .details {
         /* position: absolute; */
         width: 130px;
-        margin-top: 3px;
+        margin-top: 4px;
+        margin-right: 1px;
         /* top: 3px;
         left: 282px; */
-        font-size: 15px;
-        text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.5), 1px -1px 0 rgba(0, 0, 0, 0.5), -1px 1px 0 rgba(0, 0, 0, 0.5), 1px 1px 0 rgba(0, 0, 0, 0.5);
+        font-weight: 700;
+        font-size: 16px;
+        text-shadow: -1.6px -1.6px 0 rgba(0, 0, 0, 0.5), 1.6px -1.6px 0 rgba(0, 0, 0, 0.5), -1.6px 1.6px 0 rgba(0, 0, 0, 0.5), 1.6px 1.6px 0 rgba(0, 0, 0, 0.5);
+        font-family: "Times New Roman", serif;
     }
 
     .bWinBoxContainer {
-        /* position: absolute; */
+        position: absolute;
         display: flex;
         flex-direction: row;
-        justify-content: center;
         gap: 4px; /* space between boxes */
         justify-content: flex-end;
-        margin-top: 12px;
+        margin-top: 14px;
         margin-right: 12px;
-        /* left: 170px; */
+        left: 170px;
     }
 
     .oWinBoxContainer {
-        /* position: absolute; */
+        position: absolute;
         display: flex;
         flex-direction: row;
-        justify-content: center;
         gap: 4px; /* space between boxes */
         justify-content: flex-start;
-        margin-top: 12px;
+        margin-top: 14px;
         margin-left: 14px;
-        /* right: 170px; */
+        right: 170px;
     }
     
     .winBox {
@@ -373,12 +382,10 @@
     /* Active (filled) win boxes for each team */
     .winBox.active.blue {
         background-color: #000288;
-        border: none;
     }
 
     .winBox.active.orange {
         background-color: #ff7300;
-        border: none;
     }
 
     .bgBox {
