@@ -300,7 +300,7 @@ socketMessageStore.subscribe(($msg) => {
         statfeedEvents.update((events) =>
           events.filter((e) => e.id !== newEvent.id)
         );
-      }, DEBOUNCE_MS);
+      }, 300000);
     }
   }
 

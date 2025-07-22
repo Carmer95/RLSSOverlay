@@ -1,5 +1,6 @@
 <script>
   import InlineSvg from './InlineSvg.svelte';
+  import { fly } from "svelte/transition";
   export let event;
 
   function getImage(eventName) {
@@ -16,13 +17,16 @@
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   }
 
+  $: iconClass = event.event?.toLowerCase().replace(/\s+/g, '-') || '';
+
 </script>
 
 <div
   class="statfeed-container"
   style="background-color: {hexToRgba(event.teamColor)}"
+  in:fly={{ x: 50, duration: 200 }}
 >
-  <div class={`statfeed-icon ${event.event?.toLowerCase().replace(/\s+/g, '-') || ''}`}>
+  <div class={`statfeed-icon ${iconClass}`}>
     <InlineSvg src={getImage(event.event)} />
   </div>
   <p class="statfeed-text">
