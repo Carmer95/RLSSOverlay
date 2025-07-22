@@ -2,7 +2,6 @@
   import Boost from "./lib/Boost.svelte";
   import { fade } from 'svelte/transition';
   import {  
-    showOverlay,
     showTargetPlayer,
     showBoost,
     showScorebug,
@@ -18,7 +17,9 @@
     roundStarted, 
     statfeedEvents, 
     shouldShowOverlay, 
-    demolishedPlayers 
+    demolishedPlayers,
+    manualOverlayOverride,
+    overlayVisible
   } from "./lib/Processor";
   import TargetPlayerCard from "./lib/TargetPlayerCard.svelte";
   import Team0Boost from "./lib/Team0Boost.svelte";
@@ -37,25 +38,13 @@
   function truncateName(name, limit = 17) {
     return name.length > limit ? name.slice(0, limit) + '...' : name;
   }
+
+  $: overlayShouldRender = $manualOverlayOverride || ($overlayVisible && $shouldShowOverlay && !$podiumActive);
+
 </script>
 
-<div class="statfeed-clip">
-  <div class="statfeed-stack">
-    {#each $statfeedEvents as rawEvent (rawEvent.id)}
-      <div transition:fade>
-        <StatfeedEvent
-          event={{
-            ...rawEvent,
-            teamColor: rawEvent.team === 0 ? $blueTeam.color_primary : $orangeTeam.color_primary
-          }}
-        />
-      </div>
-    {/each}
-  </div>
-</div>
-
 <main>
-  {#if $shouldShowOverlay && $showOverlay && !$podiumActive}
+  {#if overlayShouldRender}
     <div transition:fade>
       {#if $postGameVisible}
         <!-- Postgame visible -->
@@ -77,6 +66,21 @@
           {/if}
 
           <h1>RLSS</h1>
+
+          <div class="statfeed-clip">
+            <div class="statfeed-stack">
+              {#each $statfeedEvents as rawEvent (rawEvent.id)}
+                <div transition:fade>
+                  <StatfeedEvent
+                    event={{
+                      ...rawEvent,
+                      teamColor: rawEvent.team === 0 ? $blueTeam.color_primary : $orangeTeam.color_primary
+                    }}
+                  />
+                </div>
+              {/each}
+            </div>
+          </div>
 
           {#if $showTargetPlayer && $targetPlayer?.name && $targetPlayer.name !== 'undefined'}
             <div transition:fade class="currentlySpectating">
