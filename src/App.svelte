@@ -227,7 +227,7 @@ li {
   font-weight: 500;
   color: #0004ff;
   position: absolute;
-  bottom: 140px;
+  bottom: 104px;
   left: 26px;
   z-index: 3;
   text-shadow: 0 0 5px #FFF, 0 0 20px #ffffff, 0 0 30px #000000;
