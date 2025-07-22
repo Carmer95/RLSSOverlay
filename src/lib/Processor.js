@@ -4,7 +4,6 @@ import { panelDataStore } from './cpsocket';
 import { controlSocket } from './cpsocket';
 
 // --- Visibility toggles ---
-export const showOverlay = writable(true);
 export const showTargetPlayer = writable(true);
 export const showBoost = writable(true);
 export const showScorebug = writable(true);
@@ -217,7 +216,7 @@ socketMessageStore.subscribe(($msg) => {
     const panel = get(panelDataStore);
     const initId = JSON.stringify($msg.data);
 
-    internalAutoOverlay.set(true);
+    if (get(manualOverlayOverride) === null) internalAutoOverlay.set(true);
 
     console.log('New game started. ', panel, ' ', initId, ' ', lastHandledGameId, ' ', lastGameInit );
 
@@ -252,7 +251,7 @@ socketMessageStore.subscribe(($msg) => {
   if ($msg.event === 'game:round_started_go') {
     roundStarted.set(true);
     setTimeout(() => {
-      internalAutoOverlay.set(true); // ✅ Show 3s after round starts
+      if (get(manualOverlayOverride) === null) internalAutoOverlay.set(true); // ✅ Show 3s after round starts
     }, DEBOUNCE_MS);
   }
 
@@ -330,7 +329,7 @@ socketMessageStore.subscribe(($msg) => {
     internalAutoOverlay.set(false);
 
     setTimeout(() => {
-      internalAutoOverlay.set(true);
+      if (get(manualOverlayOverride) === null) internalAutoOverlay.set(true);
       console.log('[Processor] post_countdown_begin — Showing overlay again');
     }, 4000);
   }
@@ -428,7 +427,7 @@ socketMessageStore.subscribe(($msg) => {
     setTimeout(() => {
       postGameVisible.set(true);
       postGameTimerActive.set(true); 
-      internalAutoOverlay.set(true);
+      if (get(manualOverlayOverride) === null) internalAutoOverlay.set(true);
       podiumActive.set(false);
 
     }, 5100); // Postgame screen lasts 5 seconds, this allows team celebration before the overlay reappears
