@@ -100,7 +100,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        top: 29px;
+        top: 30px;
         left: 280px;
         width: 150px;
         height: 60px;
@@ -120,7 +120,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        top: 29px;
+        top: 30px;
         left: 280px;
         width: 150px;
         height: 60px;
@@ -137,11 +137,11 @@
     .mvp-badge {
         position: absolute;
         left: 214px;
-        margin-left: 10px;
+        margin-left: 7px;
         color: rgb(255, 255, 255);
         padding: 4px 8px;
         border-radius: 5px;
-        font-size: 12px;
+        font-size: 14px;
         font-weight: bold;
         text-shadow: none;
         text-shadow: 0 0 5px #000, 0 0 10px #000, 0 0 15px #000, 0 0 20px #fff, 0 0 5px #fff, 0 0 10px #fff, 0 0 10px #fff, 0 0 10px #fff;
@@ -151,9 +151,10 @@
         position: absolute;
         display: flex;
         flex-direction: row;
-        width: 100%;
-        top: 102px;
-        left: 56px;
+        justify-content: center;
+        width: 600px;
+        top: 104px;
+        left: 50px;
         font-size: 16px;
         font-weight: bold;
         /* color: #000; */
@@ -164,11 +165,10 @@
         position: absolute;
         display: flex;
         flex-direction: row;
-        width: 32px;
-        right: 88px;
-        top: 122px;
-        margin-right: 15px;
-        /* margin-top: 15px; */
+        justify-content: center;
+        width: 600px;
+        left: 50px;
+        top: 124px;
         font-size: 20px;
         font-weight: bold;
         /* color: #000; */
@@ -178,45 +178,8 @@
     li {
         list-style-type: none;
         position: relative;
-        margin-top: 5px;
-        margin-left: 50px;
-        text-align: left;
-        width: 58px;
-        text-align: center;
+        margin: auto;
+        width: 50px;
         
-    }
-
-    .score-val{
-        right: 457px;
-        margin: auto;
-        top: 4px;
-    }
-
-    .goals-val{
-        position: absolute;
-        margin: auto;
-        right: 335px;
-        top: 4px;
-    }
-
-    .shots-val{
-        position: absolute;
-        margin: auto;
-        right: 227px;
-        top: 4px;
-    }
-
-    .assists-val{
-        position: absolute;
-        margin: auto;
-        right: 119px;
-        top: 4px;
-    }
-
-    .saves-val{
-        position: absolute;
-        margin: auto;
-        right: 11px;
-        top: 4px;
     }
 </style>

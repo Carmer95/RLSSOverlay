@@ -3,6 +3,13 @@ import { socketMessageStore } from './socket';
 import { panelDataStore } from './cpsocket';
 import { controlSocket } from './cpsocket';
 
+// --- Visibility toggles ---
+export const showOverlay = writable(true);
+export const showTargetPlayer = writable(true);
+export const showBoost = writable(true);
+export const showScorebug = writable(true);
+export const showTeams = writable(true);
+
 // Live game state from SOS
 export const updateState = derived(socketMessageStore, ($msg, set) => {
   if ($msg?.event === 'game:update_state') {
@@ -22,6 +29,8 @@ export const blueTeam = derived(updateState, ($update, set) => {
 export const orangeTeam = derived(updateState, ($update, set) => {
   set($update?.game?.teams?.[1] ?? {});
 });
+
+export const postGameWinnerName = writable(null);
 
 // Target player stores
 const rawTargetPlayer = derived(updateState, ($update, set) => {
@@ -44,6 +53,8 @@ rawTargetPlayer.subscribe((player) => {
 
 // Store for stacking events
 export const statfeedEvents = writable([]);
+
+export const demolishedPlayers = writable([]);
 
 // Grouped players by team
 export const teamsStore = derived(updateState, ($update, set) => {
@@ -95,6 +106,7 @@ export const isOT = derived(updateState, ($update, set) => {
 });
 
 export const isReplay = writable(false);
+export const goalScoredEvent = writable(null);
 
 export const roundStarted = writable(false);
 
@@ -106,7 +118,6 @@ export const seriesStarted = derived(panelDataStore, ($panelData) => {
     $panelData?.orangeWins > 0
   );
 });
-
 
 export const manualOverlayOverride = writable(null); // null = auto, otherwise true/false
 const internalAutoOverlay = writable(false);
@@ -131,6 +142,15 @@ panelDataStore.subscribe(($panel) => {
 updateState.subscribe(($update) => {
   if ($update?.game?.isReplay !== undefined) {
     isReplay.set($update.game.isReplay);
+
+    // Automatically toggle target player and boost visibility during replay
+    if ($update.game.isReplay) {
+      showTargetPlayer.set(false);
+      showBoost.set(false);
+    } else {
+      showTargetPlayer.set(true);
+      showBoost.set(true);
+    }
   }
 });
 
@@ -236,34 +256,84 @@ socketMessageStore.subscribe(($msg) => {
     }, DEBOUNCE_MS);
   }
 
-  if ($msg.event === 'game:match_destroyed') {
-    roundStarted.set(false);
-  }
-
   if ($msg.event === 'game:statfeed_event') {
-  const { event_name, main_target } = $msg.data;
-  if (event_name && main_target?.name) {
-    const newEvent = {
-      id: Date.now(), // unique ID
-      name: main_target.name,
-      event: event_name,
-      team: main_target.team_num,
-    };
+    const { event_name, main_target, secondary_target } = $msg.data;
+    console.log('[STATFEED]', event_name, main_target, secondary_target);
 
-    // Push to array and limit to 3
-    statfeedEvents.update((events) => {
-      const updated = [...events, newEvent];
-      return updated.slice(-3); // Keep only last 3
-    });
+    // ✅ Demolish logic — update demolishedPlayers list
+    if (
+      event_name === 'Demolish' &&
+      secondary_target?.id &&
+      secondary_target?.name?.trim() !== ''
+    ) {
+      const demolished = {
+        id: Date.now(),
+        playerId: secondary_target.id,
+        team: secondary_target.team_num,
+      };
 
-    // Remove after 3 seconds
-    setTimeout(() => {
-      statfeedEvents.update((events) =>
-        events.filter((e) => e.id !== newEvent.id)
-      );
-    }, DEBOUNCE_MS);
+      demolishedPlayers.update((list) => [...list, demolished]);
+
+      setTimeout(() => {
+        demolishedPlayers.update((list) =>
+          list.filter((p) => p.id !== demolished.id)
+        );
+      }, 3000);
+    }
+
+    if (event_name && main_target?.name) {
+      const newEvent = {
+        id: Date.now(), // unique ID
+        name: main_target.name,
+        event: event_name,
+        team: main_target.team_num,
+      };
+
+      // Push to array and limit to 3
+      statfeedEvents.update((events) => {
+        const updated = [...events, newEvent];
+        return updated.slice(-3); // Keep only last 3
+      });
+
+      // Remove after 3 seconds
+      setTimeout(() => {
+        statfeedEvents.update((events) =>
+          events.filter((e) => e.id !== newEvent.id)
+        );
+      }, DEBOUNCE_MS);
+    }
   }
-}
+
+  if ($msg.event === 'game:goal_scored') {
+    const data = $msg.data;
+    if (data?.scorer?.name) {
+      goalScoredEvent.set({
+        scorer: {
+          name: data.scorer.name,
+          id: data.scorer.id,
+          team: data.scorer.teamnum
+        },
+        assister: {
+          name: data.assister?.name || '',
+          id: data.assister?.id || ''
+        },
+        speed: data.goalspeed,
+        time: data.goaltime,
+        lastTouch: data.ball_last_touch?.player || '',
+        impactLocation: data.impact_location || null
+      });
+    }
+  }
+
+  if ($msg.event === 'game:post_countdown_begin') {
+    console.log('[Processor] post_countdown_begin — Hiding overlay for 3s');
+    internalAutoOverlay.set(false);
+
+    setTimeout(() => {
+      internalAutoOverlay.set(true);
+      console.log('[Processor] post_countdown_begin — Showing overlay again');
+    }, 4000);
+  }
 
   let lastHandledMatchEndId = null;
   let lastMatchEndTime = 0;
@@ -285,6 +355,15 @@ socketMessageStore.subscribe(($msg) => {
     lastMatchEndTime = now;
 
     const winner = $msg.data?.winner_team_num;
+
+    let winnerName = null;
+    if (winner === 0) {
+      winnerName = panel.panelBlueTeamName || get(blueTeam)?.name || 'Blue';
+    } else if (winner === 1) {
+      winnerName = panel.panelOrangeTeamName || get(orangeTeam)?.name || 'Orange';
+    }
+    postGameWinnerName.set(winnerName);
+
     let updated = false;
 
     const isSeriesMode = panel.bestOf > 1;
@@ -315,12 +394,15 @@ socketMessageStore.subscribe(($msg) => {
       }
     }
   }
-  
+
   if ($msg.event === 'game:match_destroyed') {
+    roundStarted.set(false);
     postGameVisible.set(false);
     manualOverlayOverride.set(null);
     isReplay.set(false);
     targetPlayer.set({});
+    showTargetPlayer.set(true);
+    showBoost.set(true);
     console.log('[Processor] match_destroyed — Overlay set to false');
   }
 

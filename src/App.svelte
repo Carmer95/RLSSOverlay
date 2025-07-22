@@ -1,31 +1,42 @@
 <script>
-  import { onMount } from 'svelte';
   import Boost from "./lib/Boost.svelte";
   import { fade } from 'svelte/transition';
-  import {  orangeTeam, blueTeam, teamsStore, targetPlayer, isOT, isReplay, postGameVisible, podiumActive, roundStarted, statfeedEvents, shouldShowOverlay } from "./lib/Processor";
+  import {  
+    showOverlay,
+    showTargetPlayer,
+    showBoost,
+    showScorebug,
+    showTeams,
+    orangeTeam, 
+    blueTeam, 
+    teamsStore, 
+    targetPlayer, 
+    isOT, 
+    isReplay, 
+    postGameVisible, 
+    podiumActive, 
+    roundStarted, 
+    statfeedEvents, 
+    shouldShowOverlay, 
+    demolishedPlayers 
+  } from "./lib/Processor";
   import TargetPlayerCard from "./lib/TargetPlayerCard.svelte";
   import Team0Boost from "./lib/Team0Boost.svelte";
   import Team1Boost from "./lib/Team1Boost.svelte";
   import Scorebug from "./lib/Scorebug.svelte"; 
   import PostGame from "./lib/PostGame.svelte";
   import StatfeedEvent from "./lib/StatfeedEvent.svelte";
+  import ReplayScreen from "./lib/ReplayScreen.svelte";
 
   function processName(name) {
-  if (name.length > 9) {
-    return "s-name";
-  } else if (name.length > 6) {
-    return "m-name";
-  } else {
-    return "l-name";
+    if (name.length > 9) return "s-name";
+    else if (name.length > 6) return "m-name";
+    else return "l-name";
   }
-}
 
-function truncateName(name, limit = 15) {
-  return name.length > limit ? name.slice(0, limit) + '...' : name;
-}
-
-console.log(teamsStore);
-
+  function truncateName(name, limit = 17) {
+    return name.length > limit ? name.slice(0, limit) + '...' : name;
+  }
 </script>
 
 <div class="statfeed-stack">
@@ -40,112 +51,142 @@ console.log(teamsStore);
     </div>
   {/each}
 </div>
+
 <main>
-
-  {#if $shouldShowOverlay && !$podiumActive}
-
-    {#if $postGameVisible}
-      <!--  PostGame shown only when postGameVisible is true -->
-      <div transition:fade class="overlay-container">
-        <Scorebug />
-        <PostGame />
-      </div>
-    {:else}
-      <!--  Everything else (during live match) -->
-      {#if !$postGameVisible && $roundStarted && $targetPlayer?.name && $targetPlayer.name !== 'undefined'}
-        <div transition:fade class="currentlySpectating">
-          <div class="statCard">
-            <TargetPlayerCard
-              teamColor={$targetPlayer.team === 0 ? $blueTeam.color_primary : $orangeTeam.color_primary}
-            />
-          </div>
-          <!--  Boost only shown when not postgame -->
-          <div class="boost">
-            {#if $targetPlayer.team === 0}
-              <Boost percent="{$targetPlayer.boost}" color="#{$blueTeam.color_primary}" />
-            {:else}
-              <Boost percent="{$targetPlayer.boost}" color="#{$orangeTeam.color_primary}" />
-            {/if}
-          </div>
+  {#if $shouldShowOverlay && $showOverlay && !$podiumActive}
+    <div transition:fade>
+      {#if $postGameVisible}
+        <!-- Postgame visible -->
+        <div class="overlay-container">
+          {#if $showScorebug}
+            <Scorebug />
+          {/if}
+          <PostGame />
         </div>
-      {/if}
+      {:else}
+        <!-- Live match content -->
 
-      {#if $roundStarted}
-        <div transition:fade class="scorebug">
-          <Scorebug />
-        </div>
+        {#if $roundStarted}
 
-        <h1>RLSS</h1>
-        
-        <!-- Blue team -->
-        {#if $teamsStore}
-          <ul transition:fade class="blueTeam">
-            {#each Object.keys($teamsStore.blueTeam) as playerId}
-              <li class="player-info-b">
-                <div class="blue-name-cont">
-                  <p class={processName($teamsStore.blueTeam[playerId].name)}>
-                    {truncateName($teamsStore.blueTeam[playerId].name)}
-                  </p>
-                </div>
-                <div class="blue-boost-cont">
-                  <p class="blue-boost">{$teamsStore.blueTeam[playerId].boost}</p>
-                </div>
-                <Team0Boost color="#{$blueTeam.color_primary}" percent={$teamsStore.blueTeam[playerId].boost} />
-              </li>
-            {/each}
-          </ul>
-        {/if}
-          
-        <!-- Orange team -->
-        {#if $teamsStore}
-          <ul  transition:fade class="orangeTeam">
-            {#each Object.keys($teamsStore.orangeTeam) as playerId}
-              <li class="player-info-o">
-                <div class="orange-name-cont">
-                  <p class={processName($teamsStore.orangeTeam[playerId].name)}>
-                    {truncateName($teamsStore.orangeTeam[playerId].name)}
-                  </p>
-                </div>
-                <div class="orange-boost-cont">
-                  <p class="orange-boost">{$teamsStore.orangeTeam[playerId].boost}</p>
-                </div>
-                <Team1Boost color="#{$orangeTeam.color_primary}" percent="{$teamsStore.orangeTeam[playerId].boost}" />
-              </li>
-            {/each}
-          </ul>
-        {/if}
-      {/if}
-    {/if}
-
-    <!-- Overtime -->
-    {#if $isOT}
-      <p  transition:fade class="overtime">OT</p>
-    {/if}
-
-    <!-- Replay -->
-    {#if $isReplay && !$postGameVisible}
-      <div class="replayBorder">
-        <p  transition:fade class="replay">REPLAY</p>
-        {#if $targetPlayer?.name}
-          <div  transition:fade class="currentlySpectating">
-            <div class="statCard">
-              <TargetPlayerCard
-                teamColor={$targetPlayer.team === 0 ? $blueTeam.color_primary : $orangeTeam.color_primary}
-              />
+          {#if $showScorebug}
+            <div transition:fade class="scorebug">
+              <Scorebug />
             </div>
-            <div class="boost">
-              {#if $targetPlayer.team === 0}
-                <Boost percent="{$targetPlayer.boost}" color="#{$blueTeam.color_primary}" />
-              {:else}
-                <Boost percent="{$targetPlayer.boost}" color="#{$orangeTeam.color_primary}" />
+          {/if}
+
+          <h1>RLSS</h1>
+
+          {#if $showTargetPlayer && $targetPlayer?.name && $targetPlayer.name !== 'undefined'}
+            <div transition:fade class="currentlySpectating">
+              <div class="statCard">
+                <TargetPlayerCard
+                  teamColor={$targetPlayer.team === 0 ? $blueTeam.color_primary : $orangeTeam.color_primary}
+                />
+              </div>
+
+              {#if $showBoost}
+                <div class="boost">
+                  {#if $targetPlayer.team === 0}
+                    <Boost percent="{$targetPlayer.boost}" color={"#" + $blueTeam.color_primary} />
+                  {:else}
+                    <Boost percent="{$targetPlayer.boost}" color={"#" + $orangeTeam.color_primary} />
+                  {/if}
+                </div>
               {/if}
             </div>
-          </div>
-        {/if}
-      </div>
-    {/if}
-  {/if}
+          {/if}
 
+          {#if $showTeams && $teamsStore}
+            <!-- Blue team players -->
+            <ul transition:fade class="blueTeam">
+              {#each Object.keys($teamsStore.blueTeam) as playerId}
+                <li class="player-info-b">
+                  <div class="blue-name-cont">
+                    <p
+                      class:demolished-name={$demolishedPlayers.find(p => p.playerId === playerId)}
+                      class={processName($teamsStore.blueTeam[playerId].name)}
+                    >
+                      {truncateName($teamsStore.blueTeam[playerId].name)}
+                    </p>
+                  </div>
+                  <div class="blue-boost-cont">
+                    <p
+                      class="blue-boost"
+                      class:demolished-name={$demolishedPlayers.find(p => p.playerId === playerId)}
+                    >
+                      {$teamsStore.blueTeam[playerId].boost}
+                    </p>
+                  </div>
+                  <Team0Boost
+                    color={"#" + $blueTeam.color_primary}
+                    percent={$teamsStore.blueTeam[playerId].boost}
+                    demolished={$demolishedPlayers.find(p => p.playerId === playerId)}
+                  />
+                </li>
+              {/each}
+            </ul>
+
+            <!-- Orange team players -->
+            <ul transition:fade class="orangeTeam">
+              {#each Object.keys($teamsStore.orangeTeam) as playerId}
+                <li class="player-info-o">
+                  <div class="orange-name-cont">
+                    <p
+                      class:demolished-name={$demolishedPlayers.find(p => p.playerId === playerId)}
+                      class={processName($teamsStore.orangeTeam[playerId].name)}
+                    >
+                      {truncateName($teamsStore.orangeTeam[playerId].name)}
+                    </p>
+                  </div>
+                  <div class="orange-boost-cont">
+                    <p
+                      class="orange-boost"
+                      class:demolished-name={$demolishedPlayers.find(p => p.playerId === playerId)}
+                    >
+                      {$teamsStore.orangeTeam[playerId].boost}
+                    </p>
+                  </div>
+                  <Team1Boost
+                    color={"#" + $orangeTeam.color_primary}
+                    percent={$teamsStore.orangeTeam[playerId].boost}
+                    demolished={$demolishedPlayers.find(p => p.playerId === playerId)}
+                  />
+                </li>
+              {/each}
+            </ul>
+          {/if}
+
+        {/if}
+
+      {/if}
+
+      {#if $isOT}
+        <p transition:fade class="overtime">OT</p>
+      {/if}
+
+      {#if $isReplay && !$postGameVisible}
+        <div class="replayBorder">
+          <p transition:fade class="replay">REPLAY</p>
+          <ReplayScreen />
+          {#if $showScorebug}
+            <Scorebug />
+          {/if}
+          {#if $showBoost}
+            <Team0Boost
+              color={"#" + $blueTeam.color_primary}
+              percent={Math.max(...Object.values($teamsStore?.blueTeam || {}).map(p => p.boost || 0))}
+              demolished={false}
+            />
+            <Team1Boost
+              color={"#" + $orangeTeam.color_primary}
+              percent={Math.max(...Object.values($teamsStore?.orangeTeam || {}).map(p => p.boost || 0))}
+              demolished={false}
+            />
+          {/if}
+        </div>
+      {/if}
+    </div>
+  {/if}
 </main>
 
 <style>
@@ -203,6 +244,45 @@ li {
     pointer-events: none; /* optional: allows clicks to pass through */
 }
 
+/* .demo-icon {
+  position: absolute;
+  top: 10px;
+  width: 24px;
+  height: 24px;
+  z-index: 5;
+}
+
+.demo-icon.left {
+  left: 260px; 
+}
+
+.demo-icon.right {
+  right: 260px; 
+}
+
+.demo-icon img {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 6px red);
+  animation: popIn 0.3s ease-out;
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+} */
+
+.demolished-name {
+  opacity: 0.5;
+  filter: grayscale(100%);
+  transition: opacity 0.3s ease;
+}
 
 .blue-name-cont {
   margin: 0px;
@@ -210,7 +290,7 @@ li {
   width: 100%;
   text-align: left;
   left: 28px;
-  max-width: 180px;
+  max-width: 200px;
   box-shadow: none;
   outline: none;
   background-color: transparent;
@@ -223,7 +303,7 @@ li {
   text-align: right;
   width: 100%;
   right: 28px;
-  max-width: 180px;
+  max-width: 200px;
   box-shadow: none;
   outline: none;
   background-color: transparent;
@@ -299,7 +379,7 @@ li {
 
 .orange-boost {
   width: 50px;
-  margin: 0px 0px 0px 12px;
+  margin: 0px 0px 0px 22px;
   position: relative;
   font-size: 28px;
   text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 15px #000000;

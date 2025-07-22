@@ -3,13 +3,14 @@
 
     export let percent = 33;
     export let color = $blueTeam.color_primary;
+    export let demolished = false;
 
     // console.log(color);
 </script>
 
 <div class="team0bg">
-    <div class="boost bg">
-        <div class="boost" style:width={percent}% style:background-color={color} />
+    <div class="boost bg" class:gray-boost={demolished}>
+        <div class="boost" class:gray-boost={demolished} style:width={percent}% style:background-color={color} />
     </div>
 </div>
 
@@ -36,4 +37,9 @@
         top: 50px;
         left: 20px;
     }
+
+  .gray-boost {
+    background-color: #777 !important;
+  }
+
 </style>
