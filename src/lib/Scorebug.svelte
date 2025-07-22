@@ -28,8 +28,21 @@
   $: blueDisplayName = panel.panelBlueTeamName?.trim() || $blueTeam?.name || 'Blue Team';
   $: orangeDisplayName = panel.panelOrangeTeamName?.trim() || $orangeTeam?.name || 'Orange Team';
 
-  $: blueNameClass = blueDisplayName.length > 12 ? 'team-name small' : 'team-name';
-  $: orangeNameClass = orangeDisplayName.length > 12 ? 'team-name small' : 'team-name';
+  $: blueNameClass = blueDisplayName
+    ? blueDisplayName.length < 5
+      ? 'team-name abbreviation'
+      : blueDisplayName.length > 12
+      ? 'team-name small'
+      : 'team-name'
+    : 'team-name';
+
+  $: orangeNameClass = orangeDisplayName
+    ? orangeDisplayName.length < 5
+      ? 'team-name abbreviation'
+      : orangeDisplayName.length > 12
+      ? 'team-name small'
+      : 'team-name'
+    : 'team-name';
 
   $: orangeScoreLeft = $orangeTeam.score >= 10 ? '564px' : '576px';
   $: blueScoreRight = $blueTeam.score >= 10 ? '564px' : '576px';
@@ -162,6 +175,13 @@
 
     .team-name.small {
         font-size: 22px;
+    }
+
+    .team-name.abbreviation {
+      margin-top: 4px;
+      font-size: 36px;
+      letter-spacing: 2px;
+      transform: scale(1.05);
     }
 
     .blue-info {
