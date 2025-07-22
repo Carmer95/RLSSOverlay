@@ -39,17 +39,19 @@
   }
 </script>
 
-<div class="statfeed-stack">
-  {#each $statfeedEvents as rawEvent (rawEvent.id)}
-    <div transition:fade>
-      <StatfeedEvent
-        event={{
-          ...rawEvent,
-          teamColor: rawEvent.team === 0 ? $blueTeam.color_primary : $orangeTeam.color_primary
-        }}
-      />
-    </div>
-  {/each}
+<div class="statfeed-clip">
+  <div class="statfeed-stack">
+    {#each $statfeedEvents as rawEvent (rawEvent.id)}
+      <div transition:fade>
+        <StatfeedEvent
+          event={{
+            ...rawEvent,
+            teamColor: rawEvent.team === 0 ? $blueTeam.color_primary : $orangeTeam.color_primary
+          }}
+        />
+      </div>
+    {/each}
+  </div>
 </div>
 
 <main>
@@ -209,7 +211,7 @@ main {
 h1 {
   position: absolute;
   top: -20px;
-  right: 336px;
+  left: 1500px;
 }
   
 li {
@@ -453,57 +455,31 @@ li {
   border-radius: 0px 0px 30px 0px;
 }
 
-.statfeed-stack {
+.statfeed-clip {
   position: absolute;
   top: 14px;
-  right: 30px;
+  left: 1600px;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  z-index: 999;
+  z-index: 1;
   align-items: flex-end;
+  overflow: visible;
+  height: 150px;
+  width: 300px;
   overflow: hidden;
 }
 
-.statfeed-container {
-  /* position: absolute;
-  top: 20px;
-  right: 30px; */
-  padding: 0px 8px;
-  margin-bottom: 2px;
-  border-radius: 12px;
+.statfeed-stack {
+  position: absolute;
   display: flex;
-  align-items: center;
-  gap: 4px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  animation: slideIn 0.3s ease-out;
-  z-index: 999;
-  justify-content: start;
-  height: 40px;
-}
-
-.statfeed-icon {
-  width: 50px;
-  height: 40px;
-}
-
-.statfeed-text {
-  font-size: 20px;
-  color: white;
-  font-weight: bold;
-  text-shadow: 0 0 4px black;
-  margin: 0px 30px 0px 30px;
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateX(50px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+  flex-direction: column;
+  gap: 8px;
+  z-index: 1;
+  align-items: flex-end;
+  overflow: visible;
+  height: 150px;
+  width: 300px;
 }
 
 </style>
