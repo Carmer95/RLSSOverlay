@@ -80,7 +80,7 @@
         /* border-bottom-left-radius: 20%;
         border-bottom-right-radius: 20%; */
         /* background-color: #000; */
-        background-image: url('../assets/RLSS_Stat_Box.png');
+        background-image: url('/assets/other-assets/RLSS_Stat_Box.png');
         background-position: 52% 43%;
         background-size: 970px 500px;
         bottom: -30px;
@@ -95,7 +95,7 @@
         /* border-bottom-left-radius: 20%;
         border-bottom-right-radius: 20%; */
         /* background-color: #000; */
-        background-image: url('../assets/RLSS_Stat_Box_O.png');
+        background-image: url('/assets/other-assets/RLSS_Stat_Box_O.png');
         background-position: 52% 43%;
         background-size: 970px 500px;
         bottom: -30px;

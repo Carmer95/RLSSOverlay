@@ -41,7 +41,7 @@
         height: 320px;
         z-index: 3;
         position: absolute;
-        background-image: url('/assets/other-assets//Boost_Meter_-_Transparent.png');
+        background-image: url('/assets/other-assets/Boost_Meter_-_Transparent.png');
         background-position: 50% 50%;
         background-size: 100%;
     }

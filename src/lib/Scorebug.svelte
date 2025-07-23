@@ -433,7 +433,7 @@
         /* box-shadow: 0px 5px 8px 0px rgba(0,0,0,0.9); */
         text-shadow: 0 0 5px #FFF, 0 0 10px #FFF, 0 0 15px #FFF, 0 0 20px #000000, 
         0 0 30px #000000;
-        background: url('/assets/other-assets//RLSS_Scorebug.png') no-repeat center center;
+        background: url('/assets/other-assets/RLSS_Scorebug.png') no-repeat center center;
         background-size: 100% 306%;
     }
 

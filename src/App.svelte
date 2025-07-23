@@ -443,7 +443,7 @@ li {
 }
 
 .player-info-b {
-  background-image: url('/assets/other-assets//RLSS_JellyBoost_-_OG_-_L_-_CROPPED.png');
+  background-image: url('/assets/other-assets/RLSS_JellyBoost_-_OG_-_L_-_CROPPED.png');
   background-position: 50% 40%;
   background-size: 300px 140px;
   height: 62px;
@@ -454,7 +454,7 @@ li {
 }
 
 .player-info-o {
-  background-image: url('/assets/other-assets//RLSS_JellyBoost_-_OG_-_R_-_CROPPED.png');
+  background-image: url('/assets/other-assets/RLSS_JellyBoost_-_OG_-_R_-_CROPPED.png');
   background-position: 50% 40%;
   background-size: 300px 140px;
   height: 62px;
