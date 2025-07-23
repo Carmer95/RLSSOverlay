@@ -319,9 +319,9 @@ li {
 .s-name {
   margin: 0px;
   position: relative;
-  font-size: 13px;
+  font-size: 18px;
   text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 3px #000000;
-  top: 30px;
+  top: 24px;
   font-family: "Exo 2", sans-serif;
   font-weight: 800;
   color: #ffffff;
@@ -335,7 +335,7 @@ li {
   position: relative;
   font-size: 26px;
   text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 3px #000000;
-  top: 16px;
+  top: 14px;
   font-family: "Exo 2", sans-serif;
   font-weight: 800;
   color: #ffffff;
@@ -349,7 +349,7 @@ li {
   position: relative;
   font-size: 26px;
   text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 3px #000000;
-  top: 16px;
+  top: 14px;
   font-family: "Exo 2", sans-serif;
   font-weight: 800;
   color: #ffffff;

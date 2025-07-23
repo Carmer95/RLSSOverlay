@@ -359,18 +359,18 @@
         border-radius: 5px;
         background-color: rgba(255, 255, 255, 0);
         color: rgb(255, 255, 255);
-        text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, 0px 1px 0 #000, 1px 0px 0 #000;
+        text-shadow: 0 0 5px #FFF, 0 0 20px #000000;
     }
 
     .details {
         /* position: absolute; */
-        width: 130px;
+        width: 140px;
         margin-top: 8px;
         margin-right: 1px;
         /* top: 3px;
         left: 282px; */
         font-weight: 800;
-        font-size: 12px;
+        font-size: 12.5px;
         text-shadow: -1.6px -1.6px 0 rgba(0, 0, 0, 0.5), 1.6px -1.6px 0 rgba(0, 0, 0, 0.5), -1.6px 1.6px 0 rgba(0, 0, 0, 0.5), 1.6px 1.6px 0 rgba(0, 0, 0, 0.5);
         font-family: "Exo 2", sans-serif;
     }
