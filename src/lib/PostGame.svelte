@@ -110,7 +110,7 @@
 
 <style>
   /* .bg {
-    background: url('../assets/RLSSPostGameBackground1.png') no-repeat center center;
+    background: url('/assets/other-assets//RLSSPostGameBackground1.png') no-repeat center center;
     background-size: cover;
     width: 80%;
     height: 80%;
@@ -123,7 +123,7 @@
     transform: translateX(-50%);
     display: flex;
     gap: 4rem;
-    background: url('../assets/RLSSPostGameBackground1.png') no-repeat center center;
+    background: url('/assets/other-assets//RLSSPostGameBackground1.png') no-repeat center center;
     background-size: cover;
     padding: 2rem 3rem;
     color: white;
