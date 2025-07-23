@@ -118,10 +118,11 @@
         /* border-radius: 5px; */
         border-bottom-left-radius: 20%;
         border-bottom-right-radius: 20%;
-        font-weight: bold;
+        font-weight: 700;
         color: #ffffff;
-        text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 10px #000000;
+        text-shadow: 0 0 5px #000000, 0 0 5px #000000, 0 0 5px #000000;
         transition: font-size 0.3s ease, width 0.3s ease;
+        font-family: "Exo 2", sans-serif;
     }
 
     .o-name {
@@ -138,10 +139,11 @@
         /* border-radius: 5px; */
         border-bottom-left-radius: 20%;
         border-bottom-right-radius: 20%;
-        font-weight: bold;
+        font-weight: 700;
         color: #ffffff;
-        text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 10px #000000;
+        text-shadow: 0 0 5px #000000, 0 0 5px #000000, 0 0 5px #000000;
         transition: font-size 0.3s ease, width 0.3s ease;
+        font-family: "Exo 2", sans-serif;
     }
 
     .player-name-s {
@@ -181,6 +183,7 @@
         font-weight: bold;
         /* color: #000; */
         text-shadow: 0 0 5px #000, 0 0 10px #000, 0 0 10px #000;
+        font-family: "Exo 2", sans-serif;
     }
     
     .value {
@@ -190,11 +193,12 @@
         justify-content: center;
         width: 600px;
         left: 50px;
-        top: 124px;
+        top: 122px;
         font-size: 20px;
         font-weight: bold;
         /* color: #000; */
         text-shadow: 0 0 5px #000, 0 0 10px #000, 0 0 10px #000;
+        font-family: "Pacifico", sans-serif;
     }
 
     li {

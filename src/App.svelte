@@ -322,7 +322,8 @@ li {
   font-size: 13px;
   text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 3px #000000;
   top: 30px;
-  font-family: "Nosifer", serif;
+  font-family: "Exo 2", sans-serif;
+  font-weight: 800;
   color: #ffffff;
   white-space: nowrap; 
   overflow: hidden; 
@@ -332,10 +333,11 @@ li {
 .m-name {
   margin: 0px;
   position: relative;
-  font-size: 16px;
+  font-size: 26px;
   text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 3px #000000;
-  top: 26px;
-  font-family: "Nosifer", serif;
+  top: 16px;
+  font-family: "Exo 2", sans-serif;
+  font-weight: 800;
   color: #ffffff;
   white-space: nowrap; 
   overflow: hidden; 
@@ -345,10 +347,11 @@ li {
 .l-name {
   margin: 0px;
   position: relative;
-  font-size: 20px;
+  font-size: 26px;
   text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 3px #000000;
-  top: 24px;
-  font-family: "Nosifer", serif;
+  top: 16px;
+  font-family: "Exo 2", sans-serif;
+  font-weight: 800;
   color: #ffffff;
   white-space: nowrap; 
   overflow: hidden; 

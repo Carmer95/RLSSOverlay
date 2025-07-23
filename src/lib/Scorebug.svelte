@@ -171,6 +171,8 @@
         white-space: normal;
         flex-direction: column;
         font-family: "Nosifer", serif;
+        color: white;
+        text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, 0px 1px 0 #000, 1px 0px 0 #000;
     }
 
     .team-name.small {
@@ -213,6 +215,8 @@
         position: absolute;
         bottom: 18px;
         right: 576px;
+        color: white;
+        text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, 0px 1px 0 #000, 1px 0px 0 #000;
     }
 
     .game {
@@ -229,6 +233,8 @@
     .time {
         position:absolute;
         top: 32px;
+        color: white;
+        text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, 0px 1px 0 #000, 1px 0px 0 #000;
     }
 
     /* .countdown-container {
@@ -334,6 +340,8 @@
         position: absolute;
         bottom: 18px;
         left: 576px;
+        color: white;
+        text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, 0px 1px 0 #000, 1px 0px 0 #000;
     }
 
     .match-info {
@@ -351,20 +359,20 @@
         border-radius: 5px;
         background-color: rgba(255, 255, 255, 0);
         color: rgb(255, 255, 255);
-        text-shadow: 0 0 5px #FFF, 0 0 20px #000000;
+        text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, 0px 1px 0 #000, 1px 0px 0 #000;
     }
 
     .details {
         /* position: absolute; */
         width: 130px;
-        margin-top: 4px;
+        margin-top: 8px;
         margin-right: 1px;
         /* top: 3px;
         left: 282px; */
-        font-weight: 700;
-        font-size: 16px;
+        font-weight: 800;
+        font-size: 12px;
         text-shadow: -1.6px -1.6px 0 rgba(0, 0, 0, 0.5), 1.6px -1.6px 0 rgba(0, 0, 0, 0.5), -1.6px 1.6px 0 rgba(0, 0, 0, 0.5), 1.6px 1.6px 0 rgba(0, 0, 0, 0.5);
-        font-family: "Times New Roman", serif;
+        font-family: "Exo 2", sans-serif;
     }
 
     .bWinBoxContainer {
@@ -375,7 +383,7 @@
         justify-content: flex-end;
         margin-top: 14px;
         margin-right: 12px;
-        left: 170px;
+        left: 190px;
     }
 
     .oWinBoxContainer {
@@ -386,7 +394,7 @@
         justify-content: flex-start;
         margin-top: 14px;
         margin-left: 14px;
-        right: 170px;
+        right: 190px;
     }
     
     .winBox {
